@@ -1,0 +1,241 @@
+/****************************************************************************
+ ************                                                    ************
+ ************                   ICANL2_SIMP                        ************
+ ************                                                    ************
+ ****************************************************************************
+ *
+ *       Author: kp
+ *        $Date: 2010/03/09 16:48:49 $
+ *    $Revision: 1.6 $
+ *
+ *  Description: Simple example program for the ICANL2 driver
+ *
+ *               - Configures CAN chip for 1MBps, basic (11 bit) CAN mode
+ *               - Creates a general message fifo to store all incoming
+ *                 CAN messages
+ *               - Creates one Tx object with ID 0x123 and sends a single
+ *                 frame with that ID
+ *               - Waits for events on CAN bus. Any incoming event and CAN
+ *                 message is printed to stdout
+ *               - Exits when more than 100 events received
+ *
+ *     Required: libraries: mdis_api, icanl2_api, usr_oss
+ *     Switches: -
+ *
+ *-------------------------------[ History ]---------------------------------
+ *
+ * $Log: icanl2_simp.c,v $
+ * Revision 1.6  2010/03/09 16:48:49  amorbach
+ * R: Compiler warnings
+ * M: Fixed compiler warings
+ *
+ * Revision 1.5  2009/06/29 15:55:58  CRuff
+ * R: 1. new type MDIS_PATH
+ *    2.compiler warnings
+ * M: 1. changed type of variable path to MDIS_PATH
+ *    2.fixed compiler warings caused by type conversions etc.
+ *
+ * Revision 1.4  2002/02/04 15:16:20  ub
+ * Cosmetics
+ *
+ * Revision 1.3  2001/12/12 16:24:30  kp
+ * rx fifo size is now 8192.
+ * fixed timestamp printing of messages
+ * fixed problem when reading out rx fifo
+ *
+ * Revision 1.2  2001/12/12 14:44:44  ub
+ * Cosmetics.
+ *
+ * Revision 1.1  2001/11/29 12:00:18  kp
+ * Initial Revision
+ *
+ *---------------------------------------------------------------------------
+ * (c) Copyright 2001 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ ****************************************************************************/
+
+static const char RCSid[]="$Id: icanl2_simp.c,v 1.6 2010/03/09 16:48:49 amorbach Exp $";
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <MEN/men_typs.h>
+#include <MEN/mdis_api.h>
+#include <MEN/usr_oss.h>
+
+#include <MEN/icanl2_codes.h>
+#include <MEN/icanl2_drv.h>
+#include <MEN/icanl2_api.h>
+
+/*--------------------------------------+
+|   DEFINES                             |
++--------------------------------------*/
+#define CHK(expression) \
+ if( !(expression)) {\
+     printf("*** Error during: %s\nfile %s\nline %d\n", \
+      #expression,__FILE__,__LINE__);\
+      printf("%s\n",ICANL2API_ErrorToString(UOS_ErrnoGet()));\
+     goto abort;\
+ }
+
+/********************************* main *************************************
+ *
+ *  Description: Program main function
+ *
+ *---------------------------------------------------------------------------
+ *  Input......: argc,argv  argument counter, data ..
+ *  Output.....: return     success (0) or error (1)
+ *  Globals....: -
+ ****************************************************************************/
+int main(int argc, char *argv[])
+{
+    MDIS_PATH   path=-1;
+    char    *device;
+    int32   rxObj, txObj, eventCount=0;
+    int32   numEvents, tick, freeMem, numCyc, ver;
+    u_int8  run;
+
+    if (argc < 2 || strcmp(argv[1],"-?")==0) {
+        printf("Syntax: icanl2_simp <device> <chan>\n");
+        printf("Function: ICANL2 simple example for M065/P5\n");
+        printf("Options:\n");
+        printf("    device       device name\n");
+        printf("\n");
+        return(1);
+    }
+
+    device = argv[1];
+
+    /*--------------------+
+    |  open path          |
+    +--------------------*/
+    CHK((path = M_open(device)) >= 0);
+
+    /*--------------------+
+    |  config             |
+    +--------------------*/
+
+    /* Timing initialization. Values select 1Mbps bit rate. */
+    printf("Configure bus parameters\n");
+    CHK( ICANL2API_SetTiming( path,
+                              0,            /* brp */
+                              2,            /* sjw */
+                              3,            /* tseg1 */
+                              2,            /* tseg2 */
+                              1,            /* spl */
+                              0x00          /* BusConf */
+        ) == 0);
+
+
+    /* set acceptence mask and operation mode */
+    CHK( ICANL2API_SetAccMask( path, 0x7FF, 0 ) == 0 );/* basic (11bit) mode */
+
+    /* get and print some information from firmware */
+    CHK( ICANL2API_FwIdent( path, &ver ) == 0 );
+    printf( "Firmware revision: %d.%d.%d\n", (int)ver>>16, (int)(ver&0xff00)>>8,
+                                            (int)ver&0xff );
+
+    CHK( ICANL2API_FwInfo( path, &numEvents, &tick, &freeMem, &numCyc ) == 0 );
+    printf( "Nbr events in fifo:%9d\n"
+            "FW tick timer:     %9d\n"
+            "Free memory:       %9d\n"
+            "Cyclic objects:    %9d\n", (int)numEvents, (int)tick, (int)freeMem, (int)numCyc );
+
+    /* create general message fifo (stores ALL incoming messages) */
+    printf("Create objects\n");
+    CHK( (rxObj = ICANL2API_CreateObject( path,
+                                          0,           /* id is ignored here */
+                                          ICANL2_OBJT_GENERAL,  /* type */
+                                          ICANL2_MOD_RECEIVE,   /* mode */
+                                          8192,                 /* fifo size */
+                                          1                 /* signal level */
+        )) >= 0 );
+
+    /* create a Tx object */
+    CHK( (txObj = ICANL2API_CreateObject( path,
+                                          0x123,                /* id */
+                                          ICANL2_OBJT_STD,      /* type */
+                                          ICANL2_MOD_TRANSMIT,  /* mode */
+                                          32,               /* fifo size */
+                                          0                 /* don't care */
+        )) >= 0 );
+
+    /* enable can communication */
+    printf("Enable can communication\n");
+    CHK( ICANL2API_EnableCan( path, 1 ) == 0 );
+
+
+    /* send a message to our tx object */
+    {
+        ICANL2_DATA msg;
+
+        msg.data_len    = 6;
+        msg.tx_flags    = ICANL2_FE_GENINT; /* generate event on Tx complete */
+        msg.data[0]     = 'H';
+        msg.data[1]     = 'E';
+        msg.data[2]     = 'L';
+        msg.data[3]     = 'L';
+        msg.data[4]     = 'O';
+        msg.data[5]     = '\0';
+
+        CHK( ICANL2API_WriteFifo( path, txObj, &msg, 1 ) > 0 );
+    }
+
+    /* wait for events */
+    while( eventCount < 100 ){
+        int32 event;
+        u_int32 obj, timeStamp;
+
+        /* wait 1s for a new event */
+        CHK( (event = ICANL2API_GetEvent( path, 1000, &obj, &timeStamp))
+             >= 0 );
+
+        if( event == 0 )
+            printf("No events...\n");
+        else {
+            printf("event 0x%x (%s) object %d time=%10lu us\n",
+                   (unsigned int)event, ICANL2API_EventToString(event), (int)obj, timeStamp * 5 );
+
+            if( (event == ICANL2_EV_SIGLVL) && (obj==rxObj) ){
+                ICANL2_DATA msg[10];
+                int32 nFrames, i, j;
+
+                /* read from general message fifo */
+                run = 1;
+
+                while( run ) {
+                    /* read from general message fifo */
+                    CHK( (nFrames = ICANL2API_ReadFifo( path, obj, msg,
+                                                        10 )) >= 0 );
+
+                    if( nFrames == 0 ) {
+                        run = 0;
+                        break;
+                    }
+
+                    for( i=0; i<nFrames; i++ ){
+                        printf("obj=%d Id=0x%08x time=%10lu us Data=",
+                               (int)obj, (int)msg[i].id,
+                               msg[i].time * 5);
+
+                        for( j=0; j<msg[i].data_len; j++ )
+                            printf("%02x ", msg[i].data[j] );
+
+                        printf("\n");
+                    }
+                }
+            }
+        }
+    }
+
+    /* disable can communication */
+    printf("Disable can communication\n");
+    CHK( ICANL2API_EnableCan( path, 0 ) == 0 );
+
+ abort:
+    if( path >= 0 )
+        M_close(path);
+
+    return(0);
+}
+
+

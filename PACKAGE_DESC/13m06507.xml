@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Klaus Popp (MEN Mikro Elektronik GmbH) -->
+<package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="packagedesc.xsd">
+	<name>13m06507</name>
+	<description>MDIS5 driver package for MEN M65 and P5</description>
+	<date>2010-03-10</date>
+	<revision>3.6</revision>
+	<docroot>LIBSRC/ICANL2_API/DOC/functions.html</docroot>
+	<modellist>
+		<model>
+			<hwname>M65</hwname>
+			<modelname>M65_L2</modelname>
+			<description>Intelligent Dual CAN Layer2 Interface</description>
+			<devnameprefix>M65</devnameprefix>
+			<devtype>MDIS</devtype>
+			<autoid>
+				<mmoduleid>0x53460041</mmoduleid>
+			</autoid>
+			<busif>M-Module</busif>
+			<subdevofftbl>00,80</subdevofftbl>
+			<settinglist>
+				<setting>
+					<name>ID_CHECK</name>
+					<description>Define wether M-Module ID-PROM is checked</description>
+					<type>U_INT32</type>
+					<value>1</value>
+					<defaultvalue>0</defaultvalue>
+				</setting>
+			</settinglist>
+		</model>
+		<model>
+			<hwname>P5</hwname>
+			<modelname>P5_L2</modelname>
+			<description>Intelligent CAN Layer2 Interface</description>
+			<devnameprefix>P5</devnameprefix>
+			<devtype>MDIS</devtype>
+			<autoid/>
+			<busif>PC-MIP</busif>
+			<settinglist>
+				<setting hidden="true">
+					<name>PCI_VENDOR_ID</name>
+					<type>U_INT32</type>
+					<defaultvalue>0x1172</defaultvalue>
+				</setting>
+				<setting hidden="true">
+					<name>PCI_DEVICE_ID</name>
+					<type>U_INT32</type>
+					<defaultvalue>0x5005</defaultvalue>
+				</setting>
+				<setting>
+					<name>ID_CHECK</name>
+					<description>Define wether M-Module ID-PROM is checked</description>
+					<type>U_INT32</type>
+					<defaultvalue>0</defaultvalue>
+				</setting>
+			</settinglist>
+		</model>
+	</modellist>
+	<settinglist>
+		<setting hidden="true">
+			<name>IRQ_ENABLE</name>
+			<description>enable irq after init</description>
+			<type>U_INT32</type>
+			<value>1</value>
+			<defaultvalue>0</defaultvalue>
+		</setting>
+	</settinglist>
+	<swmodulelist>
+		<swmodule>
+			<name>icanl2</name>
+			<description>LL driver for M65/P5, Icanl2 firmware</description>
+			<type>Low Level Driver</type>
+			<makefilepath>ICANL2/DRIVER/COM/driver.mak</makefilepath>
+		</swmodule>
+		<swmodule>
+			<name>icanl2_api</name>
+			<description>Application interface for ICANL2 driver</description>
+			<type>User Library</type>
+			<makefilepath>ICANL2_API/COM/library.mak</makefilepath>
+		</swmodule>
+		<swmodule>
+			<name>icanl2_simp</name>
+			<description>Simple example program for the ICANL2 driver</description>
+			<type>Driver Specific Tool</type>
+			<makefilepath>ICANL2/EXAMPLE/ICANL2_SIMP/COM/program.mak</makefilepath>
+		</swmodule>
+		<swmodule>
+			<name>icanl2_cyc</name>
+			<description>Example program for the ICANL2 driver: cyclic transmissions</description>
+			<type>Driver Specific Tool</type>
+			<makefilepath>ICANL2/EXAMPLE/ICANL2_CYC/COM/program.mak</makefilepath>
+		</swmodule>
+		<swmodule>
+			<name>icanl2_signal</name>
+			<description>Simple example program for using the ICANL2 driver with signals</description>
+			<type>Driver Specific Tool</type>
+			<makefilepath>ICANL2/EXAMPLE/ICANL2_SIGNAL/COM/program.mak</makefilepath>
+		</swmodule>
+		<swmodule internal="true">
+			<name>icanl2_veri</name>
+			<description>Verification program for ICANL2 MDIS5 driver</description>
+			<type>Driver Specific Tool</type>
+			<makefilepath>ICANL2/TEST/ICANL2_VERI/COM/program.mak</makefilepath>
+		</swmodule>
+	</swmodulelist>
+</package>

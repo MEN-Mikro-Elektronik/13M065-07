@@ -1,0 +1,675 @@
+<html>
+<head>
+<title>ICANL2_API library</title>
+<style type=text/css>
+    Body { background-color: #ffffff; }
+    A:link { color: #c50038; }
+    A:hover { color: #28669b; }
+    P, H1, H2, H3, H3, H5, LI {
+        color: #434343;
+        font-family: Arial, Helvetica, Univers;
+    }
+    P, LI { font-size: 9.000000pt; }
+</style>
+</head>
+<body>
+<h1>ICANL2_API library</h1>
+<p>Mon Feb  4 12:25:15 MET 2002</p>
+<h2>Overview of all Chapters</h2>
+<a href="#chapt0">Chapter: Application interface for ICANL2 driver</a><br>
+<a href="#chapt1">Chapter: Convert ICANL2 API codes to strings</a><br>
+
+<h2>Overview of all Functions</h2>
+<a name="chapt0"><a href="#intro0"><h3>Application interface for ICANL2 driver</h3></a>
+<TABLE border=1>
+<TR><TD><P><B>Function</B></P></TD><TD><P><B>Description</B></P></TD></TR>
+
+<TR><TD><P><a href="#ICANL2API_SetTiming">ICANL2API_SetTiming</a></P></TD><TD><P>Set timing and bus parameters </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_SetAccMask">ICANL2API_SetAccMask</a></P></TD><TD><P>Set global acceptance mask and extended/basic CAN mode </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_CreateObject">ICANL2API_CreateObject</a></P></TD><TD><P>Create a new message object </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_DeleteObject">ICANL2API_DeleteObject</a></P></TD><TD><P>Delete a message object </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_EnableCan">ICANL2API_EnableCan</a></P></TD><TD><P>Enable or disable CAN communication </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_ReadFifo">ICANL2API_ReadFifo</a></P></TD><TD><P>Read CAN frames from an object's fifo </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_WriteFifo">ICANL2API_WriteFifo</a></P></TD><TD><P>Write a number of CAN frames to an objects's fifo </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_NewestMsg">ICANL2API_NewestMsg</a></P></TD><TD><P>Get the most recently received CAN frame from an Rx object </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_FifoInfo">ICANL2API_FifoInfo</a></P></TD><TD><P>Get the number of used entries of an object's fifo. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_FwIdent">ICANL2API_FwIdent</a></P></TD><TD><P>Returns revision of module firmware. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_FwInfo">ICANL2API_FwInfo</a></P></TD><TD><P>Get some status information from firmware. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_GetEvent">ICANL2API_GetEvent</a></P></TD><TD><P>Read event from the event fifo </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_Signal">ICANL2API_Signal</a></P></TD><TD><P>Install or deinstall a signal </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_WriteObject">ICANL2API_WriteObject</a></P></TD><TD><P>Send a single frame to a CAN Tx object (RTR objects) </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_SendCyclic">ICANL2_SendCyclic</a></P></TD><TD><P>Cyclic transmission of Tx object </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_SetTimer">ICANL2API_SetTimer</a></P></TD><TD><P>Set ICANL2 firmware internal timer tick resolution </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_StartTimer">ICANL2API_StartTimer</a></P></TD><TD><P>Start/Stop ICANL2 firmware internal timer </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_SyncTimer">ICANL2API_SyncTimer</a></P></TD><TD><P>Syncronize ICANL2 firmware internal timer </P></TD></TR>
+</TABLE>
+<a name="chapt1"><a href="#intro1"><h3>
+Convert ICANL2 API codes to strings</h3></a>
+<TABLE border=1>
+<TR><TD><P><B>Function</B></P></TD><TD><P><B>Description</B></P></TD></TR>
+
+<TR><TD><P><a href="#ICANL2API_EventToString">ICANL2API_EventToString</a></P></TD><TD><P>Convert event to string </P></TD></TR>
+<TR><TD><P><a href="#ICANL2API_ErrorToString">ICANL2API_ErrorToString</a></P></TD><TD><P>Convert error number to string </P></TD></TR>
+</TABLE>
+ 
+<a name="intro0"><h1>Application interface for ICANL2 driver </h1></a>
+<pre>
+Required: ICANL2 MDIS4 LL driver
+Switches: -
+
+</pre>
+<a name="ICANL2API_SetTiming"><h2>Function ICANL2API_SetTiming()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_SetTiming(
+    int32 path,
+    u_int8 brp,
+    u_int8 sjw,
+    u_int8 tseg1,
+    u_int8 tseg2,
+    u_int8 spl,
+    u_int8 busconf )
+</pre><h3>Description</h3>
+<pre>Set timing and bus parameters
+
+This routine directly sets the corresponding registers of the CAN chip
+It must be called before CAN communication is enabled via
+ICANL2API_EnableCan()!
+
+The following table lists suggested paramters to be used for different
+baudrates. However the parameters may differ depending for special
+requirements:
+
+    baudrate        brp     sjw     tseg1   tseg2    spl
+    ------------    -----   -----   ------  ------   ---
+    { 1000000,        0,     1,       4,       1,    0 },
+    {  500000,        1,     1,       4,       1,    0 },
+    {  250000,        3,     1,       4,       1,    0 },
+    {  125000,        7,     1,       4,       1,    0 },
+    {  100000,        9,     1,       4,       1,    0 },
+    {   50000,       19,     1,       4,       1,    0 },
+    {   20000,       49,     1,       4,       1,    0 },
+    {   10000,       39,     1,       13,      4,    0 },
+
+Please refer to the I82527 data sheet for more information
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+brp        baudrate prescaler
+sjw        synchronisation jump with
+tseg1      timing segment 1
+tseg2      timing segment 2
+spl        sampling point
+busconf    bus configuration register
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_SetAccMask"><h2>Function ICANL2API_SetAccMask()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_SetAccMask(
+    int32 path,
+    u_int32 accMask,
+    u_int8 mode)
+</pre><h3>Description</h3>
+<pre>Set global acceptance mask and extended/basic CAN mode
+
+This routine sets the global acceptance mask. It influences the behaviour
+of RTR objects only.
+A "0" value at a specific bit position means "accept a 0 or 1 for that bit".
+A "1" means that the bit value of the incoming frame must match
+identically to the corresponding bit in the RTR object's CAN ID.
+
+If more than one RTR object's ID matches the pattern, then the one
+with the lower handle will answer.
+
+The global decision wether to run in extended (29bit IDs) or basic
+CAN (11 bit IDs) is also done using this function.
+
+This function can be called during operation.
+If this function is not called, extended mode is set with an acceptance
+mask of 0x1FFFFFFF
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+accMask    acceptance mask
+mode       0=basic 1=extended
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_CreateObject"><h2>Function ICANL2API_CreateObject()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_CreateObject(
+    int32 path,
+    u_int32 id,
+    u_int32 type,
+    u_int32 tMode,
+    u_int32 fifoSize,
+    u_int32 sigLvl)
+</pre><h3>Description</h3>
+<pre>Create a new message object
+
+This routine creates a message object and return an object handle that
+must be passed to other ICANL2API_xxx() functions.
+
+You must define all objects before enabling the CAN communication via
+ICANL2API_EnableCan()!
+
+The following object types
+exist, specified with the &#60;type&#62; parameter:
+
+- ICANL2_OBJT_GENERAL: general Rx message object:
+  if created, receives ALL objects on the bus regardless of its CAN id.
+  (tMode must be ICANL2_MOD_RECEIVE)
+
+- ICANL2_OBJT_GLOBAL: global Rx message object:
+  if created, receives all message objects that are not received by
+  the standard Rx objects. (tMode must be ICANL2_MOD_RECEIVE)
+
+- ICANL2_OBJT_RTR: this object transmits its CAN message
+  in response to a CAN RTR frame only (tMode must be ICANL2_MOD_TRANSMIT)
+  10 such objects are available.
+
+- ICANL2_OBJT_STD: Standard Rx or Tx objects (max. 2048 objects avail.)
+  (distinguished by &#60;tMode&#62;):
+
+    - ICANL2_MOD_RECEIVE:   this object can receive CAN frames
+    - ICANL2_MOD_TRANSMIT:  this object can transmit CAN frames
+
+FIFOs
+-----
+
+FIFOs for Rx objects:
+
+Rx objects may or may not have a fifo. &#60;fifoSize&#62; specifies the number
+of CAN frames the fifo can buffer (0 means no fifo, max. size is 32766).
+If a fifo is to be created, an event can be generated
+when the number of fifo entries equals the number of entries specified by
+&#60;sigLvl&#62;.
+Another event is generated when the fifo is full (and CAN messages were
+lost).
+Data from the fifo must be read with ICANL2API_ReadFifo().
+The most recent CAN frame that was received can always be read using
+ICANL2API_NewestMsg().
+
+FIFOs for Tx objects:
+
+Tx objects MUST have a fifo. Again, &#60;fifoSize&#62; specifies the number
+of objects. Whether an event is generated after the frame has been sent can
+be specified on a per-frame basis.
+Data can be written to the FIFO using ICANL2API_WriteFifo().
+
+Objects of type ICANL2_OBJT_RTR:
+These objects cannot have a fifo. Data for these objects must be
+set using ICANL2API_WriteObject()
+
+Events:
+--------
+Per-Object signals can be generated for the following events:
+- Rx: signal level reached
+- Rx: fifo overrun
+- Tx: tx complete (only for standard and OOB Tx objects, not for RTR)
+
+Events are stored in a seperate event fifo within the driver. Each new
+entry in the fifo can generate a signal that is sent from the driver
+to the application. Events can be read from the application
+using ICANL2API_GetEvent()
+
+Note:
+After startup there is already one special object created by the firmware:
+The out-of-band object with an objectHandle==ICANL2_OOB_HANDLE (3).
+Using this object, you can transmit high-priority objects bypassing
+the normal fifos. This object has fifo size of 128. Data must be written
+to the OOB object using ICANL2API_WriteFifo(). This object can also
+be used to send frames with arbitrary IDs without creating a special
+object for that ID.
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+id         can identifier (for standard objects only)
+type       ICANL2_OBJT_xxx (see text above)
+tMode      ICANL2_MOD_xxx (see text above)
+sigLvl     fifo threshold to generate event/signal
+</pre><h3>Output</h3>
+<pre>returns:   &#62;=0 object handle (0..2067) or
+           -1 on error (errno set)
+
+</pre>
+<a name="ICANL2API_DeleteObject"><h2>Function ICANL2API_DeleteObject()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_DeleteObject(
+    int32 path,
+    u_int32 objHdl)
+</pre><h3>Description</h3>
+<pre>Delete a message object
+
+This routine deletes a message object previously created by
+ICANL2API_CreateObject().
+
+Objects can be deleted only while can communication is diabled, see
+ICANL2API_EnableCan()!
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+objHdl     object handle returned by ICANL2API_CreateObject()
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_EnableCan"><h2>Function ICANL2API_EnableCan()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_EnableCan(
+    int32 path,
+    u_int8 enable)
+</pre><h3>Description</h3>
+<pre>Enable or disable CAN communication
+
+This routine effectively enables or disables the CAN chip to
+participate on the bus. It is also used to re-enable CAN communication
+after a BusOff.
+
+Note that before enabling CAN communication, you must set
+the bus parameters (ICANL2API_SetTiming()) and create all objects
+(ICANL2API_CreateObject())
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+enable     1=enable 0=disable
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_ReadFifo"><h2>Function ICANL2API_ReadFifo()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_ReadFifo(
+    int32 path,
+    u_int32 objHdl,
+    ICANL2_DATA *msgBuf,
+    u_int32 maxFrames)
+</pre><h3>Description</h3>
+<pre>Read CAN frames from an object's fifo
+
+This routine reads a maximum of &#60;maxFrames&#62; CAN frames from an Rx
+object's fifo. This routine is always non-blocking. If not enough
+frames in fifo it copies the number of entries currently present
+in the fifo.
+
+Structure of each fifo entry:
+    data_len: Length of CAN frame in bytes
+    tx_flags: not applicable
+    data    : CAN frame data
+    id      : CAN id of received object (only global and general objects,
+              invalid for standard objects)
+    time    : timestamp of frame (in units of 5.33 us)
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+objHdl     object handle returned by ICANL2API_CreateObject()
+msgBuf     array of ICANL2_DATA messages where
+           the CAN frames will be stored
+maxFrames  maximum number of frames to read from object
+</pre><h3>Output</h3>
+<pre>returns    &#62;=0 number of frames read from fifo or
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_WriteFifo"><h2>Function ICANL2API_WriteFifo()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_WriteFifo(
+    int32 path,
+    u_int32 objHdl,
+    ICANL2_DATA *msgBuf,
+    u_int32 nFrames)
+</pre><h3>Description</h3>
+<pre>Write a number of CAN frames to an objects's fifo
+
+This routine send the specified number of CAN frames to a Tx object's
+fifo. This routine is always non-blocking.
+If not enough space left in FIFO it places only those entries into
+the fifo that fit into the fifo.
+
+Structure of each fifo entry:
+    data_len: Length of CAN frame in bytes
+    tx_flags: ICANL2_FE_GENINT: Generate tx complete event when sent
+              ICANL2_FE_REMOTE: Send the frame as an RTR frame (Note 1)
+    data    : CAN frame data
+    id      : CAN id of tx object (only when used when sending to
+              the out-of-band (OOB) object)
+    time    : ignored
+
+Note 1) A seperate rx object is required for the RTR answer
+
+Note that the Tx objects have an implicit priority: The object with the
+lowest CAN-ID has the highest priority
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+objHdl     object handle returned by ICANL2API_CreateObject()
+msgBuf     array of ICANL2_DATA messages with
+           the CAN frames to send
+nFrames    number of frames to send to object
+</pre><h3>Output</h3>
+<pre>returns    &#62;=0 number of frames sent to fifo
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_NewestMsg"><h2>Function ICANL2API_NewestMsg()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_NewestMsg(
+    int32 path,
+    u_int32 objHdl,
+    ICANL2_DATA *msgBuf)
+</pre><h3>Description</h3>
+<pre>Get the most recently received CAN frame from an Rx object
+
+This routine reads the most recently received CAN frame from the message
+object. When no new message has arrived since initialisation or last
+call to ICANL2API_NewestMsg(), this function returns 1 to tell that
+there was no new data. (msgBuf invalid in this case)
+
+The following fields of msgBuf will be set:
+
+    data_len: Length of CAN frame in bytes
+    tx_flags: not applicable
+    data    : CAN frame data
+    id      : CAN id of received object
+    time    : invalid
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+objHdl     object handle returned by ICANL2API_CreateObject()
+msgBuf     pointer to buffer where
+           the CAN frame will be stored
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           1=no new data arrived
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_FifoInfo"><h2>Function ICANL2API_FifoInfo()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_FifoInfo(
+    int32 path,
+    u_int32 objHdl,
+    int32 *numEntries )
+</pre><h3>Description</h3>
+<pre>Get the number of used entries of an object's fifo.
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+objHdl     object handle returned by ICANL2API_CreateObject()
+</pre><h3>Output</h3>
+<pre>numEntries number entries
+</pre>
+<a name="ICANL2API_FwIdent"><h2>Function ICANL2API_FwIdent()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_FwIdent(
+    int32 path,
+    int32 *ver )
+</pre><h3>Description</h3>
+<pre>Returns revision of module firmware.
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+ver        fw revision coded as 32bit value
+           e.g. 0x00010203 = Ver.1.02.03
+</pre>
+<a name="ICANL2API_FwInfo"><h2>Function ICANL2API_FwInfo()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_FwInfo(
+    int32 path,
+    int32 *numEvents,
+    int32 *tick,
+    int32 *freeMem,
+    int32 *numCyc )
+</pre><h3>Description</h3>
+<pre>Get some status information from firmware.
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+numEvents  number entries in event fifo
+tick       module time in steps of 5.33us
+freeMem    free memory in bytes
+numCyc     number of cyclic objects
+</pre>
+<a name="ICANL2API_GetEvent"><h2>Function ICANL2API_GetEvent()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_GetEvent(
+    int32 path,
+    int32 timeout,
+    u_int32 *objHdlP,
+    u_int32 *timeStampP)
+</pre><h3>Description</h3>
+<pre>Read event from the event fifo
+
+This routine reads the oldest event occurred out from the event fifo.
+It can be blocking or non-blocking:
+
+timeout=-1  wait forever until event arrives
+timeout=0   do not block, return immediately
+timeout&#62;=0  timeout in ms to wait for event
+
+Several events are generated by the firmware. Some are global while
+others belong to a specific object.
+
+Here is a list of the possible events:
+
+Event code                   Type Description
+---------------------------- ---- ---------------------------
+ICANL2_EV_NONE          0x00  -   no event present
+ICANL2_EV_SIGLVL        0x01  O   fifo reached signal level threshold 1)
+ICANL2_EV_BOFF          0x02  G   i82527 in BusOff status
+ICANL2_EV_MSG_LOST      0x03  G   Message lost (firmware overload)
+ICANL2_EV_WARN          0x04  G   CAN controller in warning state
+ICANL2_EV_FIFO_FULL     0x05  O   Messages lost due to fifo full. 1)
+ICANL2_EV_TX_COMPLETE   0x07  O   Frame transmission complete.
+ICANL2_EV_STUFF_ERROR   0x11  G   i82527 stuff error
+ICANL2_EV_FORM_ERROR    0x12  G   i82527 msg malformed
+ICANL2_EV_ACK_ERROR     0x13  G   i82527 msg not acknowledged
+ICANL2_EV_BIT1_ERROR    0x14  G   i82527 CAN bus stuck to 1
+ICANL2_EV_BIT0_ERROR    0x15  G   i82527 CAN bus stuck to 0
+ICANL2_EV_CRC_ERROR     0x16  G   i82527 msg wrong crc
+ICANL2_EV_WAKE          0x20  G   i82527 wake up
+
+Type: G - global event (*objHdlP not valid)
+      O - object related event (*objHdlP contains the object handle)
+
+Note 1) ICANL2_EV_SIGLVL and ICANL2_EV_FIFO_FULL are sent only once
+when the condition is reached. Further incoming frames will not send
+the event again. The condition is cleared by reading out the fifo.
+
+Another way to get event notification is to send a signal, see
+ICANL2API_Signal()
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+timeout    timeout to wait for event (see text above)
+</pre><h3>Output</h3>
+<pre>returns    0  = no event occurred
+           &#62;0 = event number
+           -1 = error (errno set)
+*objHdlP   contains the object handle for object related
+           events
+*timeStampP timestamp for that event (5.33us resolution)
+</pre>
+<a name="ICANL2API_Signal"><h2>Function ICANL2API_Signal()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_Signal(
+    int32 path,
+    int32 signal)
+</pre><h3>Description</h3>
+<pre>Install or deinstall a signal
+
+This routine installs or removes a signal that is sent when a new event
+arrives in the event fifo, see ICANL2API_GetEvent().
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+signal     number of signal to be installed
+           0 deinstalls a previously installed signal
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_WriteObject"><h2>Function ICANL2API_WriteObject()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_WriteObject(
+    int32 path,
+    u_int32 objHdl,
+    u_int8  dataLen,
+    const u_int8  *data,
+    u_int16 flags)
+</pre><h3>Description</h3>
+<pre>Send a single frame to a CAN Tx object (RTR objects)
+
+This function sends a single CAN frame to the specified Tx object. This
+function must be used to update the data for a remote (RTR) Tx object.
+It can be used for any other Tx object as well, but for normal Tx objects
+it is preferrable to use ICANL2API_WriteFifo() due to its higher speed.
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+objHdl     object handle for Tx object
+dataLen    number of bytes in CAN frame
+data       the CAN frame to send [0..8 bytes]
+flags      transmission flags:
+           ICANL2_FE_GENINT:
+            send tx complete event when frame transmitted
+            (ignored for RTR objects)
+           ICANL2_FE_REMOTE
+            send this frame as a remote transmit request.
+            (dataLen must be 0)
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2_SendCyclic"><h2>Function ICANL2_SendCyclic()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_SendCyclic(
+    int32 path,
+    u_int32 objHdl,
+    u_int8  dataLen,
+    const u_int8  *data,
+    u_int32 cycleTime)
+</pre><h3>Description</h3>
+<pre>Cyclic transmission of Tx object
+
+This function starts to send a Tx object cyclically. The data that
+is passed via this function is sent periodically over the bus. To
+send different data, call this function again.
+
+To stop the periodical sending of that object, call this function with
+a cycle time of zero.
+
+The object must have been created before using ICANL2API_CreateObject()
+and the timer must have been initialized using ICANL2API_SetTimer()/
+ICANL2API_StartTimer()
+
+Note that cyclic objects cannot have a tx fifo
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+objHdl     object handle for Tx object
+dataLen    number of bytes in CAN frame
+data       the CAN frame to send [0..8 bytes]
+cycleTime  cycle time in units of timer ticks
+           (as defined by ICANL2API_SetTimer())
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_SetTimer"><h2>Function ICANL2API_SetTimer()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_SetTimer(
+    int32 path,
+    u_int32 tickIv)
+</pre><h3>Description</h3>
+<pre>Set ICANL2 firmware internal timer tick resolution
+
+This tick is used for cyclic sending of frames, see ICANL2API_SendCyclic()
+To activate this timer, use ICANL2API_StartTimer()
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+tickIv     tick interval in units of 8us
+           (real resolution is 5.33us)
+           maximum tickIv can be 43690 (349ms)
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_StartTimer"><h2>Function ICANL2API_StartTimer()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_StartTimer(
+    int32 path,
+    int32 on)
+</pre><h3>Description</h3>
+<pre>Start/Stop ICANL2 firmware internal timer
+
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+on         0=off 1=on
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_SyncTimer"><h2>Function ICANL2API_SyncTimer()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 __MAPILIB ICANL2API_SyncTimer(
+    int32 path)
+</pre><h3>Description</h3>
+<pre>Syncronize ICANL2 firmware internal timer
+
+Reset the tick timer so that the next tick appears exactly after the
+tick interval
+</pre><h3>Input</h3>
+<pre>path       MDIS path number for device
+</pre><h3>Output</h3>
+<pre>returns:   0=ok
+           -1 on error (errno set)
+</pre><a name="intro1"><h1>Convert ICANL2 API codes to strings </h1></a>
+<pre>
+Required: ICANL2 MDIS4 LL driver
+Switches: -
+
+</pre>
+<a name="ICANL2API_EventToString"><h2>Function ICANL2API_EventToString()</h2></a>
+
+<h3>Syntax</h3>
+<pre>const char * __MAPILIB ICANL2API_EventToString(
+    int32 evCode)
+</pre><h3>Description</h3>
+<pre>Convert event to string
+
+</pre><h3>Input</h3>
+<pre>evCode     event code
+</pre><h3>Output</h3>
+<pre>returns:   ptr to
+           -1 on error (errno set)
+</pre>
+<a name="ICANL2API_ErrorToString"><h2>Function ICANL2API_ErrorToString()</h2></a>
+
+<h3>Syntax</h3>
+<pre>char * __MAPILIB ICANL2API_ErrorToString(
+    int32 error)
+</pre><h3>Description</h3>
+<pre>Convert error number to string
+
+This routine is non-reentrant since it uses a local static buffer
+</pre><h3>Input</h3>
+<pre>error      error code
+</pre><h3>Output</h3>
+<pre>returns:   ptr to
+           -1 on error (errno set)
+</pre></body>
+</html>

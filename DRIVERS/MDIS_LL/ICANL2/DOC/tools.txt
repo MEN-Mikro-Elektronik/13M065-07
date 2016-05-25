@@ -1,0 +1,82 @@
+Program Description
+===================
+Fri Apr 16 12:03:52 CEST 2004
+ 
+Overview of all Programs
+------------------------
+
+icanl2_simp      - ICANL2 simple example for M065/P5
+icanl2_cyc       - ICANL2 cycle timer example for M065/P5
+icanl2_signal    - ICANL2 simple example for M065/P5
+
+Program icanl2_simp
+-------------------
+
+Usage:
+   icanl2_simp <device> <chan>
+
+Function:
+   ICANL2 simple example for M065/P5
+
+Options:
+   device       device name   
+   
+Description:
+   Simple example program for the ICANL2 driver   
+   
+   - Configures CAN chip for 1MBps, basic (11 bit) CAN mode   
+   - Creates a general message fifo to store all incoming   
+   CAN messages   
+   - Creates one Tx object with ID 0x123 and sends a single   
+   frame with that ID   
+   - Waits for events on CAN bus. Any incoming event and CAN   
+   message is printed to stdout   
+   - Exits when more than 100 events received   
+   
+Program icanl2_cyc
+------------------
+
+Usage:
+   icanl2_cyc <device> <chan>
+
+Function:
+   ICANL2 cycle timer example for M065/P5
+
+Options:
+   device       device name   
+   
+Description:
+   Example program for the ICANL2 driver: cyclic transmissions   
+   
+   - Configures CAN chip for 1MBps, basic (11 bit) CAN mode   
+   - Creates some Tx objects   
+   - Start to transmit these Tx objects cyclically   
+   - Waits 5s   
+   - disables CAN   
+   
+Program icanl2_signal
+---------------------
+
+Usage:
+   icanl2_signal <device> <chan>
+
+Function:
+   ICANL2 simple example for M065/P5
+
+Options:
+   device       device name   
+   
+Description:
+   Simple example program for using the ICANL2 driver with signals   
+   
+   - Configures CAN chip for 1MBps, basic (11 bit) CAN mode   
+   - Creates a general message fifo to store all incoming   
+   CAN messages   
+   - Creates one Tx object with ID 0x123 and sends a single   
+   frame with that ID   
+   - Installs signal handler and configures driver to generate   
+   signal at every event.   
+   - Waits for events on CAN bus. Any incoming event and CAN   
+   message is printed to stdout   
+   - Exits when more than 100 events received   
+   

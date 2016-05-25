@@ -1,0 +1,879 @@
+Function Description
+====================
+Fri Apr 16 12:03:52 CEST 2004
+ 
+Overview of all Functions
+-------------------------
+
+ICANL2_GetEntry        - Initialize driver's jump table 
+ICANL2_Init            - Allocate and return low-level handle, initialize hardware 
+ICANL2_Exit            - De-initialize hardware and clean up memory 
+ICANL2_Read            - not used 
+ICANL2_Write           - not used 
+ICANL2_SetStat         - Set the driver status 
+ICANL2_GetStat         - Get the driver status 
+ICANL2_BlockRead       - Read a number of entries from an object's fifo 
+ICANL2_BlockWrite      - Write a number of entries to an object's fifo 
+ICANL2_Irq             - Interrupt service routine 
+ICANL2_Info            - Get information about hardware and driver requirements 
+ICANL2TBOX_HandleSize  - Get number of bytes required for ICANL2 handle 
+ICANL2TBOX_Init        - Initialize ICANL2 handle. 
+ICANL2TBOX_Term        - De-initialize ICANL2 
+ICANL2TBOX_Reset       - Reset the processor on the M-Module 
+ICANL2TBOX_InitCom     - Initialize command communication with the ICANL2 Firmware. 
+ICANL2TBOX_FwRunning   - Indicates, whether the firmware is running. 
+ICANL2TBOX_WaitForFw   - Wait for firmware to come up. 
+ICANL2TBOX_Command     - Send a command to the ICANL2 Firmware 
+ICANL2TBOX_HandleIRQ   - Check for a pending interrupt on the specified CAN channel 
+ICANL2TBOX_IRQEnable   - Enable/disable global M-Module interrupt 
+ICANL2TBOX_ReadFifo    - Read the complete FIFO of a message object. 
+ICANL2TBOX_ReadCommAre - Read the second 256 bytes of the host comunication area 
+ICANL2TBOX_WriteFifoEn - Send CAN frames 
+ICANL2TBOX_ReadFifoEnt - Read a number of received CAN frames 
+ICANL2TBOX_NewestMsg   - Read the newest received CAN message from a msg object 
+ICANL2TBOX_ReadEvent   - Read events from the module's event FIFO 
+ICANL2TBOX_FifoInfo    - Return the number of entries of an object's FIFO 
+ 
+
+Function ICANL2_GetEntry()
+--------------------------
+
+Syntax:
+    #ifdef _ONE_NAMESPACE_PER_DRIVER_
+        extern void LL_GetEntry( LL_ENTRY* drvP )
+    #else
+    # ifdef MAC_BYTESWAP
+        extern void ICANL2_SW_GetEntry( LL_ENTRY* drvP )
+    # else
+        extern void ICANL2_GetEntry( LL_ENTRY* drvP )
+    # endif
+    #endif
+
+Description:
+    Initialize driver's jump table
+
+Input:
+    ---
+
+Output:
+    drvP  pointer to the initialized jump table structure
+
+
+Function ICANL2_Init()
+----------------------
+
+Syntax:
+    static int32 ICANL2_Init(
+        DESC_SPEC       *descP,
+        OSS_HANDLE      *osHdl,
+        MACCESS         *ma,
+        OSS_SEM_HANDLE  *devSemHdl,
+        OSS_IRQ_HANDLE  *irqHdl,
+        LL_HANDLE       **_hP
+    )
+
+Description:
+    Allocate and return low-level handle, initialize hardware
+
+    The function initializes all channels with the
+    definitions made in the descriptor. The interrupt
+    is disabled.
+
+    The following descriptor keys are used:
+
+    Descriptor key        Default          Range
+    --------------------  ---------------  -------------
+    DEBUG_LEVEL_DESC      OSS_DBG_DEFAULT  see dbg.h
+    DEBUG_LEVEL           OSS_DBG_DEFAULT  see dbg.h
+    ID_CHECK              1                0..1
+
+    ID_CHECK can be used only on the second half of an M65
+    (cannot be used on P5 or first M65 half)
+
+Input:
+    descSpec   pointer to descriptor data
+    osHdl      oss handle
+    ma         hw access handle
+    devSemHdl  device semaphore handle
+    irqHdl     irq handle
+
+Output:
+    *hP        pointer to low-level driver handle
+    return     success (0) or error code
+
+
+Function ICANL2_Exit()
+----------------------
+
+Syntax:
+    static int32 ICANL2_Exit(
+       LL_HANDLE    **_hP
+    )
+
+Description:
+    De-initialize hardware and clean up memory
+
+    The function deinitializes all channels by setting the
+    module processor in reset state. The interrupt is disabled.
+
+Input:
+    hP        pointer to low-level driver handle
+
+Output:
+    return    success (0) or error code
+
+
+Function ICANL2_Read()
+----------------------
+
+Syntax:
+    static int32 ICANL2_Read(
+        LL_HANDLE *h,
+        int32 ch,
+        int32 *valueP
+    )
+
+Description:
+    not used
+
+Input:
+    h    low-level handle
+    ch       current channel
+
+Output:
+    valueP   read value
+    return   success (0) or error code
+
+
+Function ICANL2_Write()
+-----------------------
+
+Syntax:
+    static int32 ICANL2_Write(
+        LL_HANDLE *h,
+        int32 ch,
+        int32 value
+    )
+
+Description:
+    not used
+
+Input:
+    h    low-level handle
+    ch       current channel
+    value    value to write
+
+Output:
+    return   success (0) or error code
+
+
+Function ICANL2_SetStat()
+-------------------------
+
+Syntax:
+    static int32 ICANL2_SetStat(
+        LL_HANDLE *_h,
+        int32  code,
+        int32  ch,
+        INT32_OR_64 value32_or_64
+    )
+
+Description:
+    Set the driver status
+
+    The following status codes are supported:
+
+    Code                     Description                 Values
+    -------------------      --------------------------  ----------
+    ICANL2_DELETEOBJECT      see icanl2_api.c
+    ICANL2_ENABLECAN         see icanl2_api.c
+    ICANL2_INITCAN           see icanl2_api.c
+    ICANL2_SETTIMER          see icanl2_api.c
+    ICANL2_STARTTIMER        see icanl2_api.c
+    ICANL2_SYNCTIMER         see icanl2_api.c
+    ICANL2_SETSIG_EVENT      install signal for events   signal code
+    ICANL2_CLRSIG_EVENT      remove signal for events    -
+    ICANL2_BLK_SETTIMING     see icanl2_api.c
+    ICANL2_BLK_SETACCMASK    see icanl2_api.c
+    ICANL2_BLK_WRITEOBJECT   see icanl2_api.c
+    ICANL2_BLK_SENDCYCLIC    see icanl2_api.c
+
+    M_LL_DEBUG_LEVEL         driver debug level          see dbg.h
+    M_MK_IRQ_ENABLE          interrupt enable            0..1
+    M_LL_IRQ_COUNT           interrupt counter           0..max
+
+    ICANL2_SETSIG_EVENT installs a signal that is sent when a new event
+     arrives in the event fifo
+
+    ICANL2_CLRSIG_EVENT removes the above signal
+
+Input:
+    h          low-level handle
+    code       status code
+    ch         current channel (ignored)
+    value32_or_64      data or
+               pointer to block data structure (M_SG_BLOCK)  (*)
+    (*) = for block status codes
+
+Output:
+    return     success (0) or error code
+
+
+Function ICANL2_GetStat()
+-------------------------
+
+Syntax:
+    static int32 ICANL2_GetStat(
+        LL_HANDLE *_h,
+        int32  code,
+        int32  ch,
+        INT32_OR_64 *value32_or_64P
+    )
+
+Description:
+    Get the driver status
+
+    The following status codes are supported:
+
+    Code                     Description                 Values
+    -------------------      --------------------------  ----------
+    ICANL2_FWIDENT           firmware revision
+    ICANL2_BLK_CREATEOBJECT  see icanl2_api.c
+    ICANL2_BLK_NEWESTMSG     see icanl2_api.c
+    ICANL2_BLK_GETEVENT      see icanl2_api.c
+    ICANL2_BLK_FIFOINFO      number of used entries
+    ICANL2_BLK_FWINFO        firmware status info
+    M_LL_DEBUG_LEVEL         driver debug level           see dbg.h
+    M_LL_CH_NUMBER           number of channels           2068
+    M_LL_ID_CHECK            EEPROM is checked            0..1
+    M_LL_ID_SIZE             EEPROM size [bytes]          128
+    M_LL_BLK_ID_DATA         EEPROM raw data             -
+    M_MK_BLK_REV_ID          ident function table ptr    -
+
+Input:
+    h					low-level handle
+    code				status code
+    ch					current channel (ignored)
+    value32_or_64P		pointer to block data structure (M_SG_BLOCK)  (*)
+    (*) = for block status codes
+
+Output:
+    valueP     data ptr or
+               pointer to block data structure (M_SG_BLOCK)  (*)
+    return     success (0) or error code
+    (*) = for block status codes
+
+
+Function ICANL2_BlockRead()
+---------------------------
+
+Syntax:
+    static int32 ICANL2_BlockRead(
+         LL_HANDLE *_h,
+         int32     ch,
+         void      *buf,
+         int32     size,
+         int32     *nbrRdBytesP
+    )
+
+Description:
+    Read a number of entries from an object's fifo
+
+    The current channel is used as the object handle.
+
+Input:
+    h            low-level handle
+    ch           current channel
+    buf          data buffer
+    size         data buffer size
+
+Output:
+    nbrRdBytesP  number of read bytes
+    return       success (0) or error code
+
+
+Function ICANL2_BlockWrite()
+----------------------------
+
+Syntax:
+    static int32 ICANL2_BlockWrite(
+         LL_HANDLE *_h,
+         int32     ch,
+         void      *buf,
+         int32     size,
+         int32     *nbrWrBytesP
+    )
+
+Description:
+    Write a number of entries to an object's fifo
+
+    The current channel is used as the object handle.
+
+Input:
+    h            low-level handle
+    ch           current channel
+    buf          data buffer
+    size         data buffer size
+
+Output:
+    nbrWrBytesP  number of written bytes
+    return       success (0) or error code
+
+
+Function ICANL2_Irq()
+---------------------
+
+Syntax:
+    static int32 ICANL2_Irq(
+       LL_HANDLE *_h
+    )
+
+Description:
+    Interrupt service routine
+
+    The interrupt is triggered by firmware. It indicates either
+    the completion of a firmware command or an asynchronous
+    event (e.g. fifo full).
+
+    If the driver can detect the interrupt's cause it returns
+    LL_IRQ_DEVICE or LL_IRQ_DEV_NOT, otherwise LL_IRQ_UNKNOWN.
+
+Input:
+    h    low-level handle
+
+Output:
+    return   LL_IRQ_DEVICE    irq caused by device
+             LL_IRQ_DEV_NOT   irq not caused by device
+             LL_IRQ_UNKNOWN   unknown
+
+
+Function ICANL2_Info()
+----------------------
+
+Syntax:
+    static int32 ICANL2_Info(
+       int32  infoType,
+       ...
+    )
+
+Description:
+    Get information about hardware and driver requirements
+
+    The following info codes are supported:
+
+    Code                      Description
+    ------------------------  -----------------------------
+    LL_INFO_HW_CHARACTER      hardware characteristics
+    LL_INFO_ADDRSPACE_COUNT   nr of required address spaces
+    LL_INFO_ADDRSPACE         address space information
+    LL_INFO_IRQ               interrupt required
+    LL_INFO_LOCKMODE          process lock mode required
+
+    The LL_INFO_HW_CHARACTER code returns all address and
+    data modes (ORed) which are supported by the hardware
+    (MDIS_MAxx, MDIS_MDxx).
+
+    The LL_INFO_ADDRSPACE_COUNT code returns the number
+    of address spaces used by the driver.
+
+    The LL_INFO_ADDRSPACE code returns information about one
+    specific address space (MDIS_MAxx, MDIS_MDxx). The returned
+    data mode represents the widest hardware access used by
+    the driver.
+
+    The LL_INFO_IRQ code returns whether the driver supports an
+    interrupt routine (TRUE or FALSE).
+
+    The LL_INFO_LOCKMODE code returns which process locking
+    mode the driver needs (LL_LOCK_xxx).
+
+Input:
+    infoType     info code
+    ...          argument(s)
+
+Output:
+    return       success (0) or error code
+
+
+Function ICANL2TBOX_HandleSize()
+--------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_HandleSize(void)
+
+Description:
+    Get number of bytes required for ICANL2 handle
+
+    This function returns the number of bytes required for
+    the toolbox handle structure. The caller must allocate a
+    structure of sufficient size and must pass this pointer
+    to all toolbox functions.
+
+Input:
+    -
+
+Output:
+    Return value:   size of handle
+
+
+Function ICANL2TBOX_Init()
+--------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_Init( ICANL2TBOX_HANDLE *h, MACCESS ma )
+
+Description:
+    Initialize ICANL2 handle.
+    Checks if M65 or P5 is accessed.
+
+    Note: M-Module ID is not checked here. Do this externally
+    if an M65 is used.
+
+Input:
+    h               ICANL2 handle (empty)
+    ma              module access descriptor in A08 mode
+
+Output:
+    Return value:   error code
+
+
+Function ICANL2TBOX_Term()
+--------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_Term(
+        ICANL2TBOX_HANDLE *h,
+        u_int8     canNum
+    )
+
+Description:
+    De-initialize ICANL2
+
+    This function stops CAN and disables interrupts.
+
+Input:
+    h               ICANL2 handle
+
+Output:
+    Return value:   error code
+
+
+Function ICANL2TBOX_Reset()
+---------------------------
+
+Syntax:
+    int32 _ICANL2TBOX_Reset(
+        ICANL2TBOX_HANDLE  *h,
+        u_int8     canNum
+    )
+
+Description:
+    Reset the processor on the M-Module
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+
+Output:
+    Return value:   error code *
+
+
+Function ICANL2TBOX_InitCom()
+-----------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_InitCom( ICANL2TBOX_HANDLE *h, u_int8 canNum )
+
+Description:
+    Initialize command communication with the ICANL2 Firmware.
+    Loads firmware into module.
+    After calling this routine you have to ensure that the
+    firmware is running, e.g. using ICANL2TBOX_WaitForFw().
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+
+Output:
+    Return value:   error code
+
+
+Function ICANL2TBOX_FwRunning()
+-------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_FwRunning( ICANL2TBOX_HANDLE *h, u_int8 canNum )
+
+Description:
+    Indicates, whether the firmware is running.
+    Checks the firmware's live counter. This is always != 0
+    after the firmware has initialized itself.
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+
+Output:
+    Return value:   TRUE, if firmware running;
+                    FALSE, if not.
+
+
+Function ICANL2TBOX_WaitForFw()
+-------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_WaitForFw( ICANL2TBOX_HANDLE *h, u_int8 canNum , int32 ms )
+
+Description:
+    Wait for firmware to come up.
+    Don't use this function in drivers. It uses a simple wait
+    loop and so can lock up the host for the specified time.
+
+Input:
+    h              ICANL2 handle
+    canNum         CAN channel (0=CAN-A, 1=CAN-B)
+    ms             Number of milliseconds to wait.
+
+Output:
+    Return value   error code
+
+
+Function ICANL2TBOX_Command()
+-----------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_Command(
+        ICANL2TBOX_HANDLE  *h,
+        u_int8     canNum,
+        u_int8     opcode,
+        u_int8     *reqData,
+        int16      reqLen,
+        u_int8     *rspData,
+        int16      rspLen
+    )
+
+Description:
+    Send a command to the ICANL2 Firmware
+
+    This function also sets up variables to receive response data from the
+    M65/P5 module. The routine does not wait for completion of the command.
+    It returns immediately after the first command packet was placed into the
+    M65/P5 RAM. Command completion is flagged by the interrupt routine.
+
+    The data buffers reqData and rspData must be kept intact until
+    ICANL2TBOX_HandleIrq() returns the ICANL2_HI_CMD_FINISHED status.
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    opcode          command opcode
+    reqData         pointer to request data buffer
+    reqLen          length of <reqData> (in bytes)
+    rspData         pointer to reponse data block
+    rspLen          max. size of <rspData> (in bytes)
+
+Output:
+    Return value:   error code
+
+
+Function ICANL2TBOX_HandleIRQ()
+-------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_HandleIRQ(
+        ICANL2TBOX_HANDLE  *h,
+        u_int8    canNum,
+        u_int8    statusMask,
+        u_int8    *resultP,
+        u_int8    *fwResultP
+    )
+
+Description:
+    Check for a pending interrupt on the specified CAN channel
+
+    The routine only clears the module IRQ flag, if neither
+    an event nor a command completion is pending.
+    Using <statusMask> you can determine if event update or
+    command completion are read.
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    statusMask      determines if event update or command
+                    completion (or both) are read
+                    ICANL2_STAT_CMD
+                        read command completion
+                    ICANL2_STAT_EVENT
+                        read event update
+                    (ICANL2_STAT_CMD | ICANL2_STAT_EVENT)
+                        read both
+
+Output:
+    Return value:   error code
+
+    *resultP        several flags:
+                    ICANL2_HI_IRQ_RECEIVED
+                        just for info. An interrupt from
+                        the module has been received
+                    ICANL2_HI_CMD_FINISHED
+                         command finished (and response
+                         data received)
+                    ICANL2_HI_EVENT_UPDATE
+                         events updated
+
+    *fwResultP       result value from firmware (may be NULL)
+
+
+Function ICANL2TBOX_IRQEnable()
+-------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_IRQEnable(
+        ICANL2TBOX_HANDLE  *h,
+        u_int8     canNum,
+        u_int8     enable
+    )
+
+Description:
+    Enable/disable global M-Module interrupt
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    enable          TRUE enables interrupt,
+                    FALSE disables
+
+Output:
+    Return value:   error code *
+
+
+Function ICANL2TBOX_ReadFifo()
+------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_ReadFifo( ICANL2TBOX_HANDLE *h,
+                            u_int8 canNum,
+                            u_int16 handle,
+                            u_int16 *objCnt,
+                            u_int8 *data )
+
+Description:
+    Read the complete FIFO of a message object.
+    FIFO layout for standard FIFO entry:
+     u_int16  flags;       lowest 14 bits: msg object handle
+     u_int8   data[8];     data received/to be transmitted
+     u_int32  time;        time of receipt
+     int8     data_len;    actual length of data
+     u_int8   own;         owner (0x00=host)
+
+    FIFO layout for global/general FIFO entry:
+     u_int16  flags;       lowest 14 bit: msg object handle
+     u_int8   data[8];     data received/to be transmitted
+     u_int32  time;        time of receipt
+     int8     data_len;    actual length of data
+     u_int8   own;         owner (0x00=host)
+     u_int32  id;          message ID
+     u_int32  reserved;
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    handle          handle of firmware message object
+    entrySize       size in bytes of one FIFO entry
+                     - standard FIFO: 16
+                     - global/general FIFO: 24
+
+Output:
+    objCnt          number of returned CAN frames
+    data            pointer to FIFO data. Must be big enough to
+                     contain the entire FIFO.
+                     Size depends on type of FIFO:
+                     - standard FIFO: 16 * <max_entries>
+                     - global/general FIFO: 24 * <max_entries>
+
+
+Function ICANL2TBOX_ReadCommArea()
+----------------------------------
+
+Syntax:
+    void
+    _ICANL2TBOX_ReadCommArea(
+        ICANL2TBOX_HANDLE *h,
+        u_int8 canNum,
+        u_int8 *dst )
+
+Description:
+    Read the second 256 bytes of the host comunication area
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+
+Output:
+    dst             pointer to destination array
+                    Must have a size of at least 256 bytes.
+
+
+Function ICANL2TBOX_WriteFifoEntry()
+------------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_WriteFifoEntry( ICANL2TBOX_HANDLE *h,
+                                u_int8 canNum,
+                                u_int16 handle,
+                                ICANL2_DATA *data,
+                                u_int32 *numEntries )
+
+Description:
+    Send CAN frames
+
+    Writes frames directly into the module's transmit FIFO.
+
+    Performed actions:
+    - Read base address of message objects from command area.
+    - Find message object in module memory.
+    - Read start address of FIFO.
+    - Append frame to FIFO.
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    handle          Handle of firmware message object.
+    *data            Data to send.
+    *numEntries     Size of data[] (Number of entries).
+
+Output:
+    return          error code
+    *numEntries     Number of sent frames
+
+
+Function ICANL2TBOX_ReadFifoEntry()
+-----------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_ReadFifoEntry( ICANL2TBOX_HANDLE *h,
+                                u_int8 canNum,
+                                u_int16 handle,
+                                ICANL2_DATA *data,
+                                u_int32 *numEntries )
+
+Description:
+    Read a number of received CAN frames
+
+    Data is read directly from the module's receive FIFO.
+
+    Performed actions:
+    - Read base address of message objects from command area.
+    - Find message object in module memory.
+    - Read start address of FIFO.
+    - Read frame from FIFO.
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    handle          Handle of firmware message object.
+    *numEntries     Size of data[] (Number of entries).
+
+Output:
+    data            Received data.
+                    <data->id> only used with global
+                     and general FIFO
+    *numEntries     Number of returned frames
+
+    return          error code
+
+
+Function ICANL2TBOX_NewestMsg()
+-------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_NewestMsg( ICANL2TBOX_HANDLE *h,
+                            u_int8 canNum,
+                            u_int16 handle,
+                            u_int8 *data_len_p,
+                            u_int8 *data_p,
+                            u_int32 *id_p,
+                            u_int32 *time_p )
+
+Description:
+    Read the newest received CAN message from a msg object
+
+    Works only with standard message objects (handle >=
+    ICANL2_FIRST_STD_HANDLE).
+
+    Performed actions:
+    - Read base address of message objects from command area.
+    - Find message object in module memory.
+    - Read frame from message object.
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    handle          handle of firmware message object
+
+Output:
+    data_len_p      length of CAN data to be received
+    data_p          CAN data
+    id_p            CAN ID (may be NULL)
+    time_p          time stamp of rcvd data (may be NULL)
+    return          error code
+
+
+Function ICANL2TBOX_ReadEvent()
+-------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_ReadEvent(  ICANL2TBOX_HANDLE *h,
+                            u_int8 canNum,
+                            ICANL2_EVENT *ev,
+                            u_int32 *numEntries )
+
+Description:
+    Read events from the module's event FIFO
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    *numEntries     size of data[] (Number of entries)
+
+Output:
+    *ev             event
+    *numEntries     number of returned frames
+
+
+Function ICANL2TBOX_FifoInfo()
+------------------------------
+
+Syntax:
+    int32
+    _ICANL2TBOX_FifoInfo( ICANL2TBOX_HANDLE *h,
+                            u_int8 canNum,
+                            u_int16 handle,
+                            int32 *numEntries )
+
+Description:
+    Return the number of entries of an object's FIFO
+
+Input:
+    h               ICANL2 handle
+    canNum          CAN channel (0=CAN-A, 1=CAN-B)
+    handle          handle of firmware message object
+
+Output:
+    return          error code
+    *numEntries     number of entries in FIFO
+

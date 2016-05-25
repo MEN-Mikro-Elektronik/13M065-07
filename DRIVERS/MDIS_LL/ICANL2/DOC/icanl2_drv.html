@@ -1,0 +1,832 @@
+<html>
+<head>
+<title>ICANL2 driver</title>
+<style type=text/css>
+    Body { background-color: #ffffff; }
+    A:link { color: #c50038; }
+    A:hover { color: #28669b; }
+    P, H1, H2, H3, H3, H5, LI {
+        color: #434343;
+        font-family: Arial, Helvetica, Univers;
+    }
+    P, LI { font-size: 9.000000pt; }
+</style>
+</head>
+<body>
+<h1>ICANL2 driver</h1>
+<p>Fri Apr 16 12:03:52 CEST 2004</p>
+<h2>Overview of all Chapters</h2>
+<a href="#chapt0">Chapter: Low-level driver for M65/P5 modules using ICANL2 firmware</a><br>
+<a href="#chapt1">Chapter: ICANL2 Toolbox: Init handle and hardware</a><br>
+<a href="#chapt2">Chapter: ICANL2 Toolbox: Commands</a><br>
+<a href="#chapt3">Chapter: M65 ICANL2 firmware code</a><br>
+
+<h2>Overview of all Functions</h2>
+<a name="chapt0"><a href="#intro0"><h3>Low-level driver for M65/P5 modules using ICANL2 firmware</h3></a>
+<TABLE border=1>
+<TR><TD><P><B>Function</B></P></TD><TD><P><B>Description</B></P></TD></TR>
+
+<TR><TD><P><a href="#ICANL2_GetEntry">ICANL2_GetEntry</a></P></TD><TD><P>Initialize driver's jump table </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_Init">ICANL2_Init</a></P></TD><TD><P>Allocate and return low-level handle, initialize hardware </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_Exit">ICANL2_Exit</a></P></TD><TD><P>De-initialize hardware and clean up memory </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_Read">ICANL2_Read</a></P></TD><TD><P>not used </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_Write">ICANL2_Write</a></P></TD><TD><P>not used </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_SetStat">ICANL2_SetStat</a></P></TD><TD><P>Set the driver status </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_GetStat">ICANL2_GetStat</a></P></TD><TD><P>Get the driver status </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_BlockRead">ICANL2_BlockRead</a></P></TD><TD><P>Read a number of entries from an object's fifo </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_BlockWrite">ICANL2_BlockWrite</a></P></TD><TD><P>Write a number of entries to an object's fifo </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_Irq">ICANL2_Irq</a></P></TD><TD><P>Interrupt service routine </P></TD></TR>
+<TR><TD><P><a href="#ICANL2_Info">ICANL2_Info</a></P></TD><TD><P>Get information about hardware and driver requirements </P></TD></TR>
+</TABLE>
+<a name="chapt1"><a href="#intro1"><h3>
+ICANL2 Toolbox: Init handle and hardware</h3></a>
+<TABLE border=1>
+<TR><TD><P><B>Function</B></P></TD><TD><P><B>Description</B></P></TD></TR>
+
+<TR><TD><P><a href="#ICANL2TBOX_HandleSize">ICANL2TBOX_HandleSize</a></P></TD><TD><P>Get number of bytes required for ICANL2 handle </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_Init">ICANL2TBOX_Init</a></P></TD><TD><P>Initialize ICANL2 handle. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_Term">ICANL2TBOX_Term</a></P></TD><TD><P>De-initialize ICANL2 </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_Reset">ICANL2TBOX_Reset</a></P></TD><TD><P>Reset the processor on the M-Module </P></TD></TR>
+</TABLE>
+<a name="chapt2"><a href="#intro2"><h3>
+ICANL2 Toolbox: Commands</h3></a>
+<TABLE border=1>
+<TR><TD><P><B>Function</B></P></TD><TD><P><B>Description</B></P></TD></TR>
+
+<TR><TD><P><a href="#ICANL2TBOX_InitCom">ICANL2TBOX_InitCom</a></P></TD><TD><P>Initialize command communication with the ICANL2 Firmware. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_FwRunning">ICANL2TBOX_FwRunning</a></P></TD><TD><P>Indicates, whether the firmware is running. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_WaitForFw">ICANL2TBOX_WaitForFw</a></P></TD><TD><P>Wait for firmware to come up. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_Command">ICANL2TBOX_Command</a></P></TD><TD><P>Send a command to the ICANL2 Firmware </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_HandleIRQ">ICANL2TBOX_HandleIRQ</a></P></TD><TD><P>Check for a pending interrupt on the specified CAN channel </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_IRQEnable">ICANL2TBOX_IRQEnable</a></P></TD><TD><P>Enable/disable global M-Module interrupt </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_ReadFifo">ICANL2TBOX_ReadFifo</a></P></TD><TD><P>Read the complete FIFO of a message object. </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_ReadCommArea">ICANL2TBOX_ReadCommArea</a></P></TD><TD><P>Read the second 256 bytes of the host comunication area </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_WriteFifoEntry">ICANL2TBOX_WriteFifoEntry</a></P></TD><TD><P>Send CAN frames </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_ReadFifoEntry">ICANL2TBOX_ReadFifoEntry</a></P></TD><TD><P>Read a number of received CAN frames </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_NewestMsg">ICANL2TBOX_NewestMsg</a></P></TD><TD><P>Read the newest received CAN message from a msg object </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_ReadEvent">ICANL2TBOX_ReadEvent</a></P></TD><TD><P>Read events from the module's event FIFO </P></TD></TR>
+<TR><TD><P><a href="#ICANL2TBOX_FifoInfo">ICANL2TBOX_FifoInfo</a></P></TD><TD><P>Return the number of entries of an object's FIFO </P></TD></TR>
+</TABLE>
+<a name="chapt3"><a href="#intro3"><h3>
+M65 ICANL2 firmware code</h3></a>
+<TABLE border=1>
+<TR><TD><P><B>Function</B></P></TD><TD><P><B>Description</B></P></TD></TR>
+
+</TABLE>
+ 
+<a name="intro0"><h1>Low-level driver for M65/P5 modules using ICANL2 firmware </h1></a>
+<pre>
+ICANL2 (Intelligent CAN Layer 2) is a firmware for
+M065 and P5 modules, which handles CAN Level 2 communication
+independently from host.
+
+Most of the functionality is documented in icanl2_api.c
+
+Required: OSS, DESC, DBG, ID libraries
+Switches: _ONE_NAMESPACE_PER_DRIVER_
+
+</pre>
+<a name="ICANL2_GetEntry"><h2>Function ICANL2_GetEntry()</h2></a>
+
+<h3>Syntax</h3>
+<pre>#ifdef _ONE_NAMESPACE_PER_DRIVER_
+    extern void LL_GetEntry( LL_ENTRY* drvP )
+#else
+# ifdef MAC_BYTESWAP
+    extern void ICANL2_SW_GetEntry( LL_ENTRY* drvP )
+# else
+    extern void ICANL2_GetEntry( LL_ENTRY* drvP )
+# endif
+#endif
+</pre><h3>Description</h3>
+<pre>Initialize driver's jump table
+
+</pre><h3>Input</h3>
+<pre>---
+</pre><h3>Output</h3>
+<pre>drvP  pointer to the initialized jump table structure
+</pre>
+<a name="ICANL2_Init"><h2>Function ICANL2_Init()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_Init(
+    DESC_SPEC       *descP,
+    OSS_HANDLE      *osHdl,
+    MACCESS         *ma,
+    OSS_SEM_HANDLE  *devSemHdl,
+    OSS_IRQ_HANDLE  *irqHdl,
+    LL_HANDLE       **_hP
+)
+</pre><h3>Description</h3>
+<pre>Allocate and return low-level handle, initialize hardware
+
+The function initializes all channels with the
+definitions made in the descriptor. The interrupt
+is disabled.
+
+The following descriptor keys are used:
+
+Descriptor key        Default          Range
+--------------------  ---------------  -------------
+DEBUG_LEVEL_DESC      OSS_DBG_DEFAULT  see dbg.h
+DEBUG_LEVEL           OSS_DBG_DEFAULT  see dbg.h
+ID_CHECK              1                0..1
+
+ID_CHECK can be used only on the second half of an M65
+(cannot be used on P5 or first M65 half)
+</pre><h3>Input</h3>
+<pre>descSpec   pointer to descriptor data
+osHdl      oss handle
+ma         hw access handle
+devSemHdl  device semaphore handle
+irqHdl     irq handle
+</pre><h3>Output</h3>
+<pre>*hP        pointer to low-level driver handle
+return     success (0) or error code
+</pre>
+<a name="ICANL2_Exit"><h2>Function ICANL2_Exit()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_Exit(
+   LL_HANDLE    **_hP
+)
+</pre><h3>Description</h3>
+<pre>De-initialize hardware and clean up memory
+
+The function deinitializes all channels by setting the
+module processor in reset state. The interrupt is disabled.
+
+</pre><h3>Input</h3>
+<pre>hP        pointer to low-level driver handle
+</pre><h3>Output</h3>
+<pre>return    success (0) or error code
+</pre>
+<a name="ICANL2_Read"><h2>Function ICANL2_Read()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_Read(
+    LL_HANDLE *h,
+    int32 ch,
+    int32 *valueP
+)
+</pre><h3>Description</h3>
+<pre>not used
+
+</pre><h3>Input</h3>
+<pre>h    low-level handle
+ch       current channel
+</pre><h3>Output</h3>
+<pre>valueP   read value
+return   success (0) or error code
+</pre>
+<a name="ICANL2_Write"><h2>Function ICANL2_Write()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_Write(
+    LL_HANDLE *h,
+    int32 ch,
+    int32 value
+)
+</pre><h3>Description</h3>
+<pre>not used
+</pre><h3>Input</h3>
+<pre>h    low-level handle
+ch       current channel
+value    value to write
+</pre><h3>Output</h3>
+<pre>return   success (0) or error code
+</pre>
+<a name="ICANL2_SetStat"><h2>Function ICANL2_SetStat()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_SetStat(
+    LL_HANDLE *_h,
+    int32  code,
+    int32  ch,
+    INT32_OR_64 value32_or_64
+)
+</pre><h3>Description</h3>
+<pre>Set the driver status
+
+The following status codes are supported:
+
+Code                     Description                 Values
+-------------------      --------------------------  ----------
+ICANL2_DELETEOBJECT      see icanl2_api.c
+ICANL2_ENABLECAN         see icanl2_api.c
+ICANL2_INITCAN           see icanl2_api.c
+ICANL2_SETTIMER          see icanl2_api.c
+ICANL2_STARTTIMER        see icanl2_api.c
+ICANL2_SYNCTIMER         see icanl2_api.c
+ICANL2_SETSIG_EVENT      install signal for events   signal code
+ICANL2_CLRSIG_EVENT      remove signal for events    -
+ICANL2_BLK_SETTIMING     see icanl2_api.c
+ICANL2_BLK_SETACCMASK    see icanl2_api.c
+ICANL2_BLK_WRITEOBJECT   see icanl2_api.c
+ICANL2_BLK_SENDCYCLIC    see icanl2_api.c
+
+M_LL_DEBUG_LEVEL         driver debug level          see dbg.h
+M_MK_IRQ_ENABLE          interrupt enable            0..1
+M_LL_IRQ_COUNT           interrupt counter           0..max
+
+ICANL2_SETSIG_EVENT installs a signal that is sent when a new event
+ arrives in the event fifo
+
+ICANL2_CLRSIG_EVENT removes the above signal
+
+</pre><h3>Input</h3>
+<pre>h          low-level handle
+code       status code
+ch         current channel (ignored)
+value32_or_64      data or
+           pointer to block data structure (M_SG_BLOCK)  (*)
+(*) = for block status codes
+</pre><h3>Output</h3>
+<pre>return     success (0) or error code
+</pre>
+<a name="ICANL2_GetStat"><h2>Function ICANL2_GetStat()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_GetStat(
+    LL_HANDLE *_h,
+    int32  code,
+    int32  ch,
+    INT32_OR_64 *value32_or_64P
+)
+</pre><h3>Description</h3>
+<pre>Get the driver status
+
+The following status codes are supported:
+
+Code                     Description                 Values
+-------------------      --------------------------  ----------
+ICANL2_FWIDENT           firmware revision
+ICANL2_BLK_CREATEOBJECT  see icanl2_api.c
+ICANL2_BLK_NEWESTMSG     see icanl2_api.c
+ICANL2_BLK_GETEVENT      see icanl2_api.c
+ICANL2_BLK_FIFOINFO      number of used entries
+ICANL2_BLK_FWINFO        firmware status info
+M_LL_DEBUG_LEVEL         driver debug level           see dbg.h
+M_LL_CH_NUMBER           number of channels           2068
+M_LL_ID_CHECK            EEPROM is checked            0..1
+M_LL_ID_SIZE             EEPROM size [bytes]          128
+M_LL_BLK_ID_DATA         EEPROM raw data             -
+M_MK_BLK_REV_ID          ident function table ptr    -
+
+</pre><h3>Input</h3>
+<pre>h          low-level handle
+code       status code
+ch         current channel (ignored)
+value32_or_64P     pointer to block data structure (M_SG_BLOCK)  (*)
+(*) = for block status codes
+</pre><h3>Output</h3>
+<pre>valueP     data ptr or
+           pointer to block data structure (M_SG_BLOCK)  (*)
+return     success (0) or error code
+(*) = for block status codes
+</pre>
+<a name="ICANL2_BlockRead"><h2>Function ICANL2_BlockRead()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_BlockRead(
+     LL_HANDLE *_h,
+     int32     ch,
+     void      *buf,
+     int32     size,
+     int32     *nbrRdBytesP
+)
+</pre><h3>Description</h3>
+<pre>Read a number of entries from an object's fifo
+
+The current channel is used as the object handle.
+
+</pre><h3>Input</h3>
+<pre>h            low-level handle
+ch           current channel
+buf          data buffer
+size         data buffer size
+</pre><h3>Output</h3>
+<pre>nbrRdBytesP  number of read bytes
+return       success (0) or error code
+</pre>
+<a name="ICANL2_BlockWrite"><h2>Function ICANL2_BlockWrite()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_BlockWrite(
+     LL_HANDLE *_h,
+     int32     ch,
+     void      *buf,
+     int32     size,
+     int32     *nbrWrBytesP
+)
+</pre><h3>Description</h3>
+<pre>Write a number of entries to an object's fifo
+
+The current channel is used as the object handle.
+
+</pre><h3>Input</h3>
+<pre>h            low-level handle
+ch           current channel
+buf          data buffer
+size         data buffer size
+</pre><h3>Output</h3>
+<pre>nbrWrBytesP  number of written bytes
+return       success (0) or error code
+</pre>
+<a name="ICANL2_Irq"><h2>Function ICANL2_Irq()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_Irq(
+   LL_HANDLE *_h
+)
+</pre><h3>Description</h3>
+<pre>Interrupt service routine
+
+The interrupt is triggered by firmware. It indicates either
+the completion of a firmware command or an asynchronous
+event (e.g. fifo full).
+
+If the driver can detect the interrupt's cause it returns
+LL_IRQ_DEVICE or LL_IRQ_DEV_NOT, otherwise LL_IRQ_UNKNOWN.
+
+</pre><h3>Input</h3>
+<pre>h    low-level handle
+</pre><h3>Output</h3>
+<pre>return   LL_IRQ_DEVICE    irq caused by device
+         LL_IRQ_DEV_NOT   irq not caused by device
+         LL_IRQ_UNKNOWN   unknown
+</pre>
+<a name="ICANL2_Info"><h2>Function ICANL2_Info()</h2></a>
+
+<h3>Syntax</h3>
+<pre>static int32 ICANL2_Info(
+   int32  infoType,
+   ...
+)
+</pre><h3>Description</h3>
+<pre>Get information about hardware and driver requirements
+
+The following info codes are supported:
+
+Code                      Description
+------------------------  -----------------------------
+LL_INFO_HW_CHARACTER      hardware characteristics
+LL_INFO_ADDRSPACE_COUNT   nr of required address spaces
+LL_INFO_ADDRSPACE         address space information
+LL_INFO_IRQ               interrupt required
+LL_INFO_LOCKMODE          process lock mode required
+
+The LL_INFO_HW_CHARACTER code returns all address and
+data modes (ORed) which are supported by the hardware
+(MDIS_MAxx, MDIS_MDxx).
+
+The LL_INFO_ADDRSPACE_COUNT code returns the number
+of address spaces used by the driver.
+
+The LL_INFO_ADDRSPACE code returns information about one
+specific address space (MDIS_MAxx, MDIS_MDxx). The returned
+data mode represents the widest hardware access used by
+the driver.
+
+The LL_INFO_IRQ code returns whether the driver supports an
+interrupt routine (TRUE or FALSE).
+
+The LL_INFO_LOCKMODE code returns which process locking
+mode the driver needs (LL_LOCK_xxx).
+
+</pre><h3>Input</h3>
+<pre>infoType     info code
+...          argument(s)
+</pre><h3>Output</h3>
+<pre>return       success (0) or error code
+</pre><a name="intro1"><h1>ICANL2 Toolbox: Init handle and hardware </h1></a>
+<pre>
+Required:
+Switches:
+
+</pre>
+<a name="ICANL2TBOX_HandleSize"><h2>Function ICANL2TBOX_HandleSize()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_HandleSize(void)
+</pre><h3>Description</h3>
+<pre>Get number of bytes required for ICANL2 handle
+
+This function returns the number of bytes required for
+the toolbox handle structure. The caller must allocate a
+structure of sufficient size and must pass this pointer
+to all toolbox functions.
+</pre><h3>Input</h3>
+<pre>-
+</pre><h3>Output</h3>
+<pre>Return value:   size of handle
+</pre>
+<a name="ICANL2TBOX_Init"><h2>Function ICANL2TBOX_Init()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_Init( ICANL2TBOX_HANDLE *h, MACCESS ma )
+</pre><h3>Description</h3>
+<pre>Initialize ICANL2 handle.
+Checks if M65 or P5 is accessed.
+
+Note: M-Module ID is not checked here. Do this externally
+if an M65 is used.
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle (empty)
+ma              module access descriptor in A08 mode
+</pre><h3>Output</h3>
+<pre>Return value:   error code
+</pre>
+<a name="ICANL2TBOX_Term"><h2>Function ICANL2TBOX_Term()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_Term(
+    ICANL2TBOX_HANDLE *h,
+    u_int8     canNum
+)
+</pre><h3>Description</h3>
+<pre>De-initialize ICANL2
+
+This function stops CAN and disables interrupts.
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+</pre><h3>Output</h3>
+<pre>Return value:   error code
+</pre>
+<a name="ICANL2TBOX_Reset"><h2>Function ICANL2TBOX_Reset()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32 _ICANL2TBOX_Reset(
+    ICANL2TBOX_HANDLE  *h,
+    u_int8     canNum
+)
+</pre><h3>Description</h3>
+<pre>Reset the processor on the M-Module
+
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+
+</pre><h3>Output</h3>
+<pre>Return value:   error code *
+
+</pre><a name="intro2"><h1>ICANL2 Toolbox: Commands </h1></a>
+<pre>
+Required:
+Switches:
+
+</pre>
+<a name="ICANL2TBOX_InitCom"><h2>Function ICANL2TBOX_InitCom()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_InitCom( ICANL2TBOX_HANDLE *h, u_int8 canNum )
+</pre><h3>Description</h3>
+<pre>Initialize command communication with the ICANL2 Firmware.
+Loads firmware into module.
+After calling this routine you have to ensure that the
+firmware is running, e.g. using ICANL2TBOX_WaitForFw().
+
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+</pre><h3>Output</h3>
+<pre>Return value:   error code
+</pre>
+<a name="ICANL2TBOX_FwRunning"><h2>Function ICANL2TBOX_FwRunning()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_FwRunning( ICANL2TBOX_HANDLE *h, u_int8 canNum )
+</pre><h3>Description</h3>
+<pre>Indicates, whether the firmware is running.
+Checks the firmware's live counter. This is always != 0
+after the firmware has initialized itself.
+
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+</pre><h3>Output</h3>
+<pre>Return value:   TRUE, if firmware running;
+                FALSE, if not.
+</pre>
+<a name="ICANL2TBOX_WaitForFw"><h2>Function ICANL2TBOX_WaitForFw()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_WaitForFw( ICANL2TBOX_HANDLE *h, u_int8 canNum , int32 ms )
+</pre><h3>Description</h3>
+<pre>Wait for firmware to come up.
+Don't use this function in drivers. It uses a simple wait
+loop and so can lock up the host for the specified time.
+
+</pre><h3>Input</h3>
+<pre>h              ICANL2 handle
+canNum         CAN channel (0=CAN-A, 1=CAN-B)
+ms             Number of milliseconds to wait.
+</pre><h3>Output</h3>
+<pre>Return value   error code
+</pre>
+<a name="ICANL2TBOX_Command"><h2>Function ICANL2TBOX_Command()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_Command(
+    ICANL2TBOX_HANDLE  *h,
+    u_int8     canNum,
+    u_int8     opcode,
+    u_int8     *reqData,
+    int16      reqLen,
+    u_int8     *rspData,
+    int16      rspLen
+)
+</pre><h3>Description</h3>
+<pre>Send a command to the ICANL2 Firmware
+
+This function also sets up variables to receive response data from the
+M65/P5 module. The routine does not wait for completion of the command.
+It returns immediately after the first command packet was placed into the
+M65/P5 RAM. Command completion is flagged by the interrupt routine.
+
+The data buffers reqData and rspData must be kept intact until
+ICANL2TBOX_HandleIrq() returns the ICANL2_HI_CMD_FINISHED status.
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+opcode          command opcode
+reqData         pointer to request data buffer
+reqLen          length of &#60;reqData&#62; (in bytes)
+rspData         pointer to reponse data block
+rspLen          max. size of &#60;rspData&#62; (in bytes)
+
+</pre><h3>Output</h3>
+<pre>Return value:   error code
+</pre>
+<a name="ICANL2TBOX_HandleIRQ"><h2>Function ICANL2TBOX_HandleIRQ()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_HandleIRQ(
+    ICANL2TBOX_HANDLE  *h,
+    u_int8    canNum,
+    u_int8    statusMask,
+    u_int8    *resultP,
+    u_int8    *fwResultP
+)
+</pre><h3>Description</h3>
+<pre>Check for a pending interrupt on the specified CAN channel
+
+The routine only clears the module IRQ flag, if neither
+an event nor a command completion is pending.
+Using &#60;statusMask&#62; you can determine if event update or
+command completion are read.
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+statusMask      determines if event update or command
+                completion (or both) are read
+                ICANL2_STAT_CMD
+                    read command completion
+                ICANL2_STAT_EVENT
+                    read event update
+                (ICANL2_STAT_CMD | ICANL2_STAT_EVENT)
+                    read both
+
+</pre><h3>Output</h3>
+<pre>Return value:   error code
+
+*resultP        several flags:
+                ICANL2_HI_IRQ_RECEIVED
+                    just for info. An interrupt from
+                    the module has been received
+                ICANL2_HI_CMD_FINISHED
+                     command finished (and response
+                     data received)
+                ICANL2_HI_EVENT_UPDATE
+                     events updated
+
+*fwResultP       result value from firmware (may be NULL)
+
+</pre>
+<a name="ICANL2TBOX_IRQEnable"><h2>Function ICANL2TBOX_IRQEnable()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_IRQEnable(
+    ICANL2TBOX_HANDLE  *h,
+    u_int8     canNum,
+    u_int8     enable
+)
+</pre><h3>Description</h3>
+<pre>Enable/disable global M-Module interrupt
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+enable          TRUE enables interrupt,
+                FALSE disables
+
+</pre><h3>Output</h3>
+<pre>Return value:   error code *
+
+</pre>
+<a name="ICANL2TBOX_ReadFifo"><h2>Function ICANL2TBOX_ReadFifo()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_ReadFifo( ICANL2TBOX_HANDLE *h,
+                        u_int8 canNum,
+                        u_int16 handle,
+                        u_int16 *objCnt,
+                        u_int8 *data )
+</pre><h3>Description</h3>
+<pre>Read the complete FIFO of a message object.
+FIFO layout for standard FIFO entry:
+ u_int16  flags;       lowest 14 bits: msg object handle
+ u_int8   data[8];     data received/to be transmitted
+ u_int32  time;        time of receipt
+ int8     data_len;    actual length of data
+ u_int8   own;         owner (0x00=host)
+
+FIFO layout for global/general FIFO entry:
+ u_int16  flags;       lowest 14 bit: msg object handle
+ u_int8   data[8];     data received/to be transmitted
+ u_int32  time;        time of receipt
+ int8     data_len;    actual length of data
+ u_int8   own;         owner (0x00=host)
+ u_int32  id;          message ID
+ u_int32  reserved;
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+handle          handle of firmware message object
+entrySize       size in bytes of one FIFO entry
+                 - standard FIFO: 16
+                 - global/general FIFO: 24
+</pre><h3>Output</h3>
+<pre>objCnt          number of returned CAN frames
+data            pointer to FIFO data. Must be big enough to
+                 contain the entire FIFO.
+                 Size depends on type of FIFO:
+                 - standard FIFO: 16 * &#60;max_entries&#62;
+                 - global/general FIFO: 24 * &#60;max_entries&#62;
+</pre>
+<a name="ICANL2TBOX_ReadCommArea"><h2>Function ICANL2TBOX_ReadCommArea()</h2></a>
+
+<h3>Syntax</h3>
+<pre>void
+_ICANL2TBOX_ReadCommArea(
+    ICANL2TBOX_HANDLE *h,
+    u_int8 canNum,
+    u_int8 *dst )
+</pre><h3>Description</h3>
+<pre>Read the second 256 bytes of the host comunication area
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+</pre><h3>Output</h3>
+<pre>dst             pointer to destination array
+                Must have a size of at least 256 bytes.
+</pre>
+<a name="ICANL2TBOX_WriteFifoEntry"><h2>Function ICANL2TBOX_WriteFifoEntry()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_WriteFifoEntry( ICANL2TBOX_HANDLE *h,
+                            u_int8 canNum,
+                            u_int16 handle,
+                            ICANL2_DATA *data,
+                            u_int32 *numEntries )
+</pre><h3>Description</h3>
+<pre>Send CAN frames
+
+Writes frames directly into the module's transmit FIFO.
+
+Performed actions:
+- Read base address of message objects from command area.
+- Find message object in module memory.
+- Read start address of FIFO.
+- Append frame to FIFO.
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+handle          Handle of firmware message object.
+*data            Data to send.
+*numEntries     Size of data[] (Number of entries).
+
+</pre><h3>Output</h3>
+<pre>return          error code
+*numEntries     Number of sent frames
+</pre>
+<a name="ICANL2TBOX_ReadFifoEntry"><h2>Function ICANL2TBOX_ReadFifoEntry()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_ReadFifoEntry( ICANL2TBOX_HANDLE *h,
+                            u_int8 canNum,
+                            u_int16 handle,
+                            ICANL2_DATA *data,
+                            u_int32 *numEntries )
+</pre><h3>Description</h3>
+<pre>Read a number of received CAN frames
+
+Data is read directly from the module's receive FIFO.
+
+Performed actions:
+- Read base address of message objects from command area.
+- Find message object in module memory.
+- Read start address of FIFO.
+- Read frame from FIFO.
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+handle          Handle of firmware message object.
+*numEntries     Size of data[] (Number of entries).
+
+</pre><h3>Output</h3>
+<pre>data            Received data.
+                &#60;data-&#62;id&#62; only used with global
+                 and general FIFO
+*numEntries     Number of returned frames
+
+return          error code
+</pre>
+<a name="ICANL2TBOX_NewestMsg"><h2>Function ICANL2TBOX_NewestMsg()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_NewestMsg( ICANL2TBOX_HANDLE *h,
+                        u_int8 canNum,
+                        u_int16 handle,
+                        u_int8 *data_len_p,
+                        u_int8 *data_p,
+                        u_int32 *id_p,
+                        u_int32 *time_p )
+</pre><h3>Description</h3>
+<pre>Read the newest received CAN message from a msg object
+
+Works only with standard message objects (handle &#62;=
+ICANL2_FIRST_STD_HANDLE).
+
+Performed actions:
+- Read base address of message objects from command area.
+- Find message object in module memory.
+- Read frame from message object.
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+handle          handle of firmware message object
+
+</pre><h3>Output</h3>
+<pre>data_len_p      length of CAN data to be received
+data_p          CAN data
+id_p            CAN ID (may be NULL)
+time_p          time stamp of rcvd data (may be NULL)
+return          error code
+</pre>
+<a name="ICANL2TBOX_ReadEvent"><h2>Function ICANL2TBOX_ReadEvent()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_ReadEvent(  ICANL2TBOX_HANDLE *h,
+                        u_int8 canNum,
+                        ICANL2_EVENT *ev,
+                        u_int32 *numEntries )
+</pre><h3>Description</h3>
+<pre>Read events from the module's event FIFO
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+*numEntries     size of data[] (Number of entries)
+
+</pre><h3>Output</h3>
+<pre>*ev             event
+*numEntries     number of returned frames
+</pre>
+<a name="ICANL2TBOX_FifoInfo"><h2>Function ICANL2TBOX_FifoInfo()</h2></a>
+
+<h3>Syntax</h3>
+<pre>int32
+_ICANL2TBOX_FifoInfo( ICANL2TBOX_HANDLE *h,
+                        u_int8 canNum,
+                        u_int16 handle,
+                        int32 *numEntries )
+</pre><h3>Description</h3>
+<pre>Return the number of entries of an object's FIFO
+</pre><h3>Input</h3>
+<pre>h               ICANL2 handle
+canNum          CAN channel (0=CAN-A, 1=CAN-B)
+handle          handle of firmware message object
+
+</pre><h3>Output</h3>
+<pre>return          error code
+*numEntries     number of entries in FIFO
+</pre><a name="intro3"><h1>M65 ICANL2 firmware code </h1></a>
+<pre>
+Required:
+Switches:
+
+</pre></body>
+</html>
