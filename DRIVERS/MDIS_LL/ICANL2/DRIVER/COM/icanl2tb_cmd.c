@@ -122,15 +122,15 @@
 */
 #ifdef PPC_GUARDED_ACCESS
 
-#undef MREAD_D8(ma,offs)
-#undef MREAD_D16(ma,offs)
-#undef MWRITE_D8(ma,offs,val)
-#undef MWRITE_D16(ma,offs,val)
+#undef MREAD_D8
+#undef MREAD_D16
+#undef MWRITE_D8
+#undef MWRITE_D16
 
-#define UCC_SYNC_EIEIO 	_asm( " sync;" \
-			                  " eieio" )
+#define UCC_SYNC_EIEIO 	__asm( " sync;" \
+			                   " eieio" )
 
-u_int8 MREAD_D8( MACCESS ma, int offs )
+static u_int8 MREAD_D8( MACCESS ma, int offs )
 {
 	u_int8 ret;
 
@@ -143,7 +143,7 @@ u_int8 MREAD_D8( MACCESS ma, int offs )
 	return( ret );
 }
 
-u_int16 MREAD_D16( MACCESS ma, int offs )
+static u_int16 MREAD_D16( MACCESS ma, int offs )
 {
 	u_int16 ret;
 
@@ -156,7 +156,7 @@ u_int16 MREAD_D16( MACCESS ma, int offs )
 	return( ret );
 }
 
-void MWRITE_D8( MACCESS ma, int offs, u_int8 val)
+static void MWRITE_D8( MACCESS ma, int offs, u_int8 val)
 {
 	UCC_SYNC_EIEIO; 
 
@@ -165,7 +165,7 @@ void MWRITE_D8( MACCESS ma, int offs, u_int8 val)
 	UCC_SYNC_EIEIO; 
 }
 
-void MWRITE_D16( MACCESS ma, int offs, u_int16 val)
+static void MWRITE_D16( MACCESS ma, int offs, u_int16 val)
 {
 	UCC_SYNC_EIEIO; 
 
