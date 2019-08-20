@@ -16,91 +16,25 @@
  *---------------------------[ Public Functions ]----------------------------
  *
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2tb_cmd.c,v $
- * Revision 1.18  2009/06/30 11:45:51  CRuff
- * R: windows compiler warning after porting to MDIS5
- * M: added braces for type cast
- *
- * Revision 1.17  2009/06/29 15:49:55  CRuff
- * R: 1.Porting to MDIS5
- *    2.compiler warnings
- * M: 1.changed according to MDIS Porting Guide 0.5
- *    2.fixed compiler warings caused by type conversions etc.
- *
- * Revision 1.16  2004/06/04 13:01:07  kp
- * fixed compilation problem with GCC3 and _asm statements
- *
- * Revision 1.15  2004/04/05 08:59:06  ub
- * changed: ICANL2TBOX_LoadFirmware() declared static
- *
- * Revision 1.14  2002/02/07 14:14:02  ub
- * Fixed: Bug in calculation of number of free fifo entries in
- * ICANL2TBOX_WriteFifoEntry()
- * Fixed: <used> flag now set after all other elements of fifo entry in
- * ICANL2TBOX_WriteFifoEntry()
- *
- * Revision 1.13  2002/02/06 13:45:10  ub
- * Added: Modified MACCESS macros which synchronize the PPC's cache between moduleaccesses
- *
- * Revision 1.12  2002/02/04 15:16:08  ub
- * Added: Functionality for reading general message object using
- * ICANL2TBOX_NewestMsg().
- * Changed: Comment improvements.
- * Added: _ICANL2TBOX_FwRunning(), _ICANL2TBOX_WaitForFw()
- * Changed: ICANL2TBOX_InitCom() does no longer wait for initialization of
- * firmware.
- *
- * Revision 1.11  2001/12/20 10:32:33  Schoberl
- * fixed MSVC warnings
- * removed: external const char _ICANL2_fw
- *
- * Revision 1.10  2001/12/12 16:24:26  kp
- * fixed newest message to return consistent data
- *
- * Revision 1.9  2001/12/12 14:43:44  ub
- * ICANL2_SET_POINTER() statements necessary for Ultra-C now enclosed in #ifdefs.
- * Ported for little-endian CPUs.
- * _ICANL2_ReadFifo() now directly reads FIFO address from firmware RAM.
- * New: _ICANL2TBOX_FifoInfo()
- * _ICANL2TBOX_NewestMessage() now ensures data consistency.
- * _ICANL2TBOX_NewestMessage() returns time of receipt.
- *
- * Revision 1.8  2001/12/04 12:15:13  ub
- * Copy loops in ICANL2TBOX_WriteFifo() and ICANL2TBOX_ReadFifo() eliminated.
- *
- * Revision 1.7  2001/11/29 12:00:06  kp
- * Added underscore to all function names (Variant specific renaming)
- *
- * Revision 1.6  2001/11/29 10:29:44  ub
- * Pointer access changed to work on OS-9000/PPC.
- * Added: ICANL2TBOX_ReadEvent()
- * ICANL2TBOX_ReadFifo() and ICANL2TBOX_WriteFifo() extended to write/read
- * multiple FIFO entries.
- *
- * Revision 1.5  2001/11/21 10:54:35  ub
- * Some internal functions now flagged "nodoc".
- *
- * Revision 1.4  2001/11/06 16:40:40  ub
- * Added functions: ICANL2TBOX_WriteFifoEntry(), ICANL2TBOX_ReadFifoEntry(),
- * ICANL2TBOX_NewestMsg(), copy_to_module().
- *
- * Revision 1.3  2001/10/24 10:18:48  ub
- * ICANL2TOX_ReadFifo() newly implemented.
- * New function: ICANL2TBOX_ReadCommArea()
- * Replaced MREAD_D32()/MWRITE_D32() by MREAD_D16()/MWRITE_D16().
- *
- * Revision 1.2  2001/09/26 12:04:45  ub
- * Changed some function comments.
- *
- * Revision 1.1  2001/09/25 14:20:56  ub
- * Initial Revision
- *
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2002 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
+ * Copyright 2002-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef _LL_DRV_
  #include <stdio.h>

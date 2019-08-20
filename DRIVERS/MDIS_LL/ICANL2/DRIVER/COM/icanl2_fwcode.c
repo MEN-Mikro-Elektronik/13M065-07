@@ -16,24 +16,25 @@
  *---------------------------[ Public Functions ]----------------------------
  *  -
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2_fwcode.c,v $
- * Revision 1.10  2004/04/05 08:58:58  ub
- * cosmetics
- *
- * Revision 1.9  2002/02/04 15:14:49  ub
- * Cosmetics
- *
- * Revision 1.8  2001/12/20 10:32:23  Schoberl
- * firmware code now in icanl2_fwcode.h
- *
- * Initial Revision
- *
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2001 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ * Copyright 2001-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 
 #include <MEN/men_typs.h>

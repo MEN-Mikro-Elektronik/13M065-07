@@ -15,25 +15,25 @@
  *---------------------------[ Public Functions ]----------------------------
  *
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2_strings.c,v $
- * Revision 1.4  2010/03/09 16:48:53  amorbach
- * R: Compiler warnings
- * M: Fixed compiler warings
- *
- * Revision 1.3  2002/02/04 15:16:29  ub
- * Added: strings for <EV_BOFF_END> and <EV_WARN_END>.
- *
- * Revision 1.2  2001/12/12 14:48:11  ub
- * Event strings fixed.
- *
- * Revision 1.1  2001/11/29 12:00:24  kp
- * Initial Revision
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2001 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ * Copyright 2001-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <MEN/men_typs.h>
 #include <MEN/mdis_err.h>

@@ -15,33 +15,25 @@
  *---------------------------[ Public Functions ]----------------------------
  *
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2_api.c,v $
- * Revision 1.6  2009/06/29 16:00:43  CRuff
- * R: 1.Porting to MDIS5
- * M: 1.changed according to MDIS Porting Guide 0.5
- *
- * Revision 1.5  2004/04/05 08:59:37  ub
- * added function comment
- *
- * Revision 1.4  2002/02/07 14:16:59  ub
- * Comment changed
- *
- * Revision 1.3  2002/02/04 15:16:27  ub
- * Added: ICANL2API_FwIdent(), ICANL2API_FwInfo(), ICANL2API_Signal()
- * Corrected: Comment of ICANL2API_SetTimer()
- * Deleted: ICANL2API_InitCan()
- *
- * Revision 1.2  2001/12/12 14:46:42  ub
- * ICANL2API_FifoInfo() added
- *
- * Revision 1.1  2001/11/29 12:00:23  kp
- * Initial Revision
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2001 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ * Copyright 2001-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include <MEN/men_typs.h>
 #include <MEN/mdis_err.h>

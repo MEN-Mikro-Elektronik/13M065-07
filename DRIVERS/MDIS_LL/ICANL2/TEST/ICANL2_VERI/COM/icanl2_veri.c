@@ -16,57 +16,25 @@
  *     Required: libraries: mdis_api, icanl2_api, usr_utl, usr_oss
  *     Switches: -
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2_veri.c,v $
- * Revision 1.10  2010/03/08 13:45:11  amorbach
- * R: All tests failed
- * M: startByte setting in VerifyMultiFrames() corrected
- *
- * Revision 1.9  2009/06/29 15:58:01  CRuff
- * R: 1. Signal handler may cause stack overflow
- *    2.compiler warnings
- * M: 1. added Macro __MAPILIB to Signal handler declaration /implementation
- *    2.fixed compiler warings caused by type conversions etc.
- *
- * Revision 1.8  2004/04/05 08:59:35  ub
- * globals declared static
- *
- * Revision 1.7  2003/02/06 13:36:35  ub
- * Added: Set size if event fifo to 32 entries.
- *
- * Revision 1.6  2002/02/07 14:15:45  ub
- * REV 1.4
- * TestI(): test of transmission of single frames added
- * TestM(): removed from default test list due to insufficient reliability of
- * generating BusOff event. Call manually.
- *
- * Revision 1.5  2002/02/04 15:16:25  ub
- * REV 1.3
- * Added: TestL(): Signals
- * Added: TestM(): BusOff detection and recovery
- *
- * Revision 1.4  2001/12/19 09:10:16  kp
- * REV 1.2
- * TestB(): Don't check Tx fifo info (CPU speed dependent)
- * TestB(): wait only 0.3s for events
- * TestD(): timestamp checking more tolerant (CPU speed dependent)
- * TestG(): UOS_MikroDelay() between WriteFifo calls to simulate slower CPU
- *
- * Revision 1.3  2001/12/12 16:24:32  kp
- * cosmetics
- *
- * Revision 1.2  2001/12/12 14:44:46  ub
- * TestH(): Now removes SIGLVL event from queue.
- * TestD(): Checks time stamps of ICANL2API_NewestMsg().
- * TestB(): Tests ICANL2API_FifoInfo().
- *
- * Revision 1.1  2001/11/29 12:00:21  kp
- * Initial Revision
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2001 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ * Copyright 2001-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 static const char RCSid[]="$Id: icanl2_veri.c,v 1.10 2010/03/08 13:45:11 amorbach Exp $";
 

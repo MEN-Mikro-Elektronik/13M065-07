@@ -10,26 +10,25 @@
  *
  *     Switches:
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2_api.h,v $
- * Revision 2.4  2009/06/30 11:48:37  CRuff
- * R: 1.Porting to MDIS5
- * M: 1.changed according to MDIS Porting Guide 0.5
- *
- * Revision 2.3  2002/02/04 15:16:42  ub
- * Added: ICANL2API_FwIdent(), ICANL2API_FwInfo(), ICANL2API_Signal()
- * Deleted: ICANL2API_InitCan()
- *
- * Revision 2.2  2001/12/12 14:48:17  ub
- * Added: ICANL2API_FifoInfo()
- *
- * Revision 2.1  2001/11/29 12:00:28  kp
- * Initial Revision
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2001 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ * Copyright 2001-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef _ICANL2_API_H
 #define _ICANL2_API_H

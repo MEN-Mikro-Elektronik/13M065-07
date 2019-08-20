@@ -16,32 +16,25 @@
  *---------------------------[ Public Functions ]----------------------------
  *  ICANL2TBOX_HandleSize, ICANL2TBOX_Init, ICANL2TBOX_Term
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2tb_init.c,v $
- * Revision 1.10  2004/04/05 08:59:09  ub
- * added variant for little endian and byteswap
- *
- * Revision 1.9  2003/02/06 13:36:33  ub
- * Comment changed.
- *
- * Revision 1.8  2002/02/04 15:16:10  ub
- * Cosmetics
- *
- * Revision 1.7  2001/11/29 12:00:08  kp
- * Added underscore to all function names (Variant specific renaming)
- *
- * Revision 1.6  2001/11/29 10:29:46  ub
- * In ICANL2TBOX_Init() distinction between M65 and P5 added.
- *
- * Revision 1.5  2001/11/21 10:54:37  ub
- * In ICANL2TBOX_Term() the two module processor on an M65 can now reset
- * separately.
- * ICANL2TBOX_Reset() drives the reset pin for 1000 module access cycles.
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2002 by MEN Mikro Elektronik GmbH, Nuremberg, Germany
+ * Copyright 2002-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #ifndef _LL_DRV_
  #include <string.h>

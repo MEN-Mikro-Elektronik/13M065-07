@@ -10,46 +10,25 @@
  *
  *     Switches:
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2tb_i.h,v $
- * Revision 1.10  2009/06/29 15:51:44  CRuff
- * R: 1.compiler warning because of while(1) loop
- * M: 1.fixed compiler warning: reformulated ICANL2_LOCK_SEM define
- *
- * Revision 1.9  2004/04/05 08:59:11  ub
- * added variant for little endian and byteswap
- *
- * Revision 1.8  2002/02/07 14:15:07  ub
- * Added: some #defines for debugging
- *
- * Revision 1.7  2002/02/04 15:16:12  ub
- * Cosmetics
- *
- * Revision 1.6  2001/12/12 16:24:28  kp
- * changed ICANL2_DU_FULL from 1 to 0xff
- *
- * Revision 1.5  2001/12/12 14:43:46  ub
- * New offsets for message control structure #defined.
- * defines for <ICANL2_MO_DATAUSED>
- *
- * Revision 1.4  2001/11/29 10:29:50  ub
- * Added #defines ICANL2_SET/GET_POINTER() for CPU-neutral access to module
- * pointer register.
- *
- * Revision 1.3  2001/11/06 16:40:47  ub
- * Project specific  #defines begin with ICANL2_ now.
- *
- * Revision 1.2  2001/10/24 10:18:54  ub
- * Cosmetic changes.
- *
- * Revision 1.1  2001/09/25 14:20:59  ub
- * Initial Revision
- *
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2001 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ * Copyright 2001-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /*-----------------------------------------+
 |  DEFINES                                 |

@@ -19,56 +19,25 @@
  *     Required: OSS, DESC, DBG, ID libraries
  *     Switches: _ONE_NAMESPACE_PER_DRIVER_
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2_drv.c,v $
- * Revision 1.12  2009/06/30 11:48:03  CRuff
- * R: Porting to MDIS5
- * M: changed according to MDIS Porting Guide 0.5
- *
- * Revision 1.11  2009/06/30 11:44:33  CRuff
- * R: windows compiler warning after porting to MDIS5
- * M: added type cast
- *
- * Revision 1.10  2009/06/29 15:48:37  CRuff
- * R: 1.Porting to MDIS5
- *    2.compiler warnings
- * M: 1.changed according to MDIS Porting Guide 0.5
- *    2.fixed compiler warings caused by type conversions etc.
- *
- * Revision 1.9  2004/06/03 15:02:56  kp
- * ignore IDCHECK key for first channel of M65
- *
- * Revision 1.8  2004/04/05 08:58:56  ub
- * minor changes for MDIS4/2004 conformity
- *
- * Revision 1.7  2003/03/06 10:17:22  ub
- * Fixed: Semaphore handling in ICANL2_Irq() now implemented correctly
- *
- * Revision 1.6  2003/02/06 13:36:29  ub
- * Fixed: Semaphore unblocking on receiving of events in ICANL2_Irq().
- *
- * Revision 1.5  2002/02/04 15:13:40  ub
- * Added: GetStat functionality for ICANL2_FWIDENT and ICANL2_FWINFO.
- * Changed: In ICANL2_Init() waiting for firmware now done using OSS_Delay().
- *
- * Revision 1.4  2001/12/20 10:32:16  Schoberl
- * 1) fixed cast warnings of MSVC
- * 2) Bug fix in ICANL2_Irq(): return LL_IRQ_DEVICE if device caused irq
- *
- * Revision 1.3  2001/12/12 16:24:20  kp
- * bug fix dlen in SENDCYCLIC/WRITEOBJECT
- *
- * Revision 1.2  2001/12/12 14:43:39  ub
- * Added: ICANL2API_FifoInfo()
- * Changes for little endian CPUs.
- *
- * Revision 1.1  2001/11/29 12:00:05  kp
- * Initial Revision
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2002 by MEN Mikro Elektronik GmbH, Nuernberg, Germany
+ * Copyright 2002-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 static const char RCSid[]="$Id: icanl2_drv.c,v 1.12 2009/06/30 11:48:03 CRuff Exp $";
 

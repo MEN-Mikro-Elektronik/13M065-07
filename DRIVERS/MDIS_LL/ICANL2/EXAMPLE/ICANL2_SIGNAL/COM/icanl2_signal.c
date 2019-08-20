@@ -24,29 +24,25 @@
  *     Required: libraries: mdis_api, icanl2_api, usr_oss
  *     Switches: -
  *
- *-------------------------------[ History ]---------------------------------
- *
- * $Log: icanl2_signal.c,v $
- * Revision 1.4  2010/03/09 16:48:51  amorbach
- * R: Compiler warnings
- * M: Fixed compiler warings
- *
- * Revision 1.3  2009/06/29 15:54:43  CRuff
- * R: 1.Porting to MDIS5
- *    2.compiler warnings
- * M: 1.changed according to MDIS Porting Guide 0.5
- *    2.fixed compiler warings caused by type conversions etc.
- *
- * Revision 1.2  2004/04/05 08:59:31  ub
- * globals declared static
- *
- * Revision 1.1  2002/02/04 15:16:23  ub
- * Initial Revision
- *
  *
  *---------------------------------------------------------------------------
- * (c) Copyright 2002 by MEN mikro elektronik GmbH, Nuernberg, Germany
+ * Copyright 2002-2019, MEN Mikro Elektronik GmbH
  ****************************************************************************/
+
+ /*
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 static const char RCSid[]="$Id: icanl2_signal.c,v 1.4 2010/03/09 16:48:51 amorbach Exp $";
 
