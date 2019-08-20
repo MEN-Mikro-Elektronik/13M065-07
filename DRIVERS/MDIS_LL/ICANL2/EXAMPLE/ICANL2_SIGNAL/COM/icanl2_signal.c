@@ -5,8 +5,6 @@
  ****************************************************************************
  *
  *       Author: ub
- *        $Date: 2010/03/09 16:48:51 $
- *    $Revision: 1.4 $
  *
  *  Description: Simple example program for using the ICANL2 driver with signals
  *
@@ -44,7 +42,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-static const char RCSid[]="$Id: icanl2_signal.c,v 1.4 2010/03/09 16:48:51 amorbach Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

@@ -3,8 +3,6 @@
  *         Name: icanl2_drv.h
  *
  *       Author: ub
- *        $Date: 2009/06/30 11:49:08 $
- *    $Revision: 2.5 $
  *
  *  Description: Header file for ICANL2 driver
  *               - ICANL2 specific status codes

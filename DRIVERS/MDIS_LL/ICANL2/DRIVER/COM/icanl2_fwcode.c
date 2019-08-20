@@ -3,9 +3,7 @@
  *         Name: icanl2_fwcode.c
  *      Project: M65 ICANL2 host toolbox
  *
- *      $Author: ub $ / kp
- *        $Date: 2004/04/05 08:58:58 $
- *    $Revision: 1.10 $
+ *      Author: ub  / kp
  *
  *  Description: M65 ICANL2 firmware code
  *

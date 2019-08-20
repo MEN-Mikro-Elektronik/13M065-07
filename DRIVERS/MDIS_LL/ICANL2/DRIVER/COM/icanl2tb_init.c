@@ -4,8 +4,6 @@
  *      Project: ICANL2 host toolbox
  *
  *       Author: ub
- *        $Date: 2004/04/05 08:59:09 $
- *    $Revision: 1.10 $
  *
  *  Description: ICANL2 Toolbox: Init handle and hardware
  *

@@ -2,9 +2,7 @@
  *
  *         Name: icanl2tb_i.h
  *
- *      $Author: CRuff $
- *        $Date: 2009/06/29 15:51:44 $
- *    $Revision: 1.10 $
+ *      Author: CRuff 
  *
  *  Description: Internal include file for M65 ICANL2 host toolbox library
  *

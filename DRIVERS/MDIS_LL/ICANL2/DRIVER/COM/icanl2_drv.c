@@ -4,8 +4,6 @@
  *      Project: ICANL2 module driver (MDIS4)
  *
  *       Author: kp
- *        $Date: 2009/06/30 11:48:03 $
- *    $Revision: 1.12 $
  *
  *  Description: Low-level driver for M65/P5 modules using ICANL2 firmware
  *
@@ -39,7 +37,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-static const char RCSid[]="$Id: icanl2_drv.c,v 1.12 2009/06/30 11:48:03 CRuff Exp $";
 
 #include <MEN/men_typs.h>   /* system dependent definitions   */
 #include <MEN/maccess.h>    /* hw access macros and types     */
@@ -56,7 +53,10 @@ static const char RCSid[]="$Id: icanl2_drv.c,v 1.12 2009/06/30 11:48:03 CRuff Ex
 #include <MEN/icanl2_tbox.h>  /* ICANL2 toolbox definitions  */
 #include <MEN/ll_entry.h>     /* low-level driver jump table  */
 #include <MEN/icanl2_drv.h>   /* ICANL2 driver header file */
+
 #include "icanl2tb_i.h"
+
+static const char IdentString[]=MENT_XSTR(MAK_REVISION);
 
 /*-----------------------------------------+
 |  DEFINES                                 |
@@ -1340,7 +1340,7 @@ static int32 SetRegister(						/* nodoc */
  ****************************************************************************/
 static char* Ident( void )	/* nodoc */
 {
-    return( "ICANL2 - ICANL2 low level driver: $Id: icanl2_drv.c,v 1.12 2009/06/30 11:48:03 CRuff Exp $" );
+    return( (char*)IdentString );
 }
 
 /********************************* Cleanup **********************************

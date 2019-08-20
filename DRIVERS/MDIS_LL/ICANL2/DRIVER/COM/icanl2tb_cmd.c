@@ -4,8 +4,6 @@
  *      Project: ICANL2 host toolbox
  *
  *       Author: ub
- *        $Date: 2009/06/30 11:45:51 $
- *    $Revision: 1.18 $
  *
  *  Description: ICANL2 Toolbox: Commands
  *

@@ -2,9 +2,7 @@
  *
  *         Name: icanl2_codes.h
  *
- *      $Author: ub $
- *        $Date: 2002/02/04 15:16:38 $
- *    $Revision: 2.3 $
+ *      Author: ub 
  *
  *  Description: Include file for ICANL2 host toolbox library
  *

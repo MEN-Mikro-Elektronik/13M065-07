@@ -5,8 +5,6 @@
  ****************************************************************************
  *
  *       Author: kp
- *        $Date: 2010/03/08 13:45:11 $
- *    $Revision: 1.10 $
  *
  *  Description: Verification program for ICANL2 MDIS4 driver
  *
@@ -36,7 +34,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-static const char RCSid[]="$Id: icanl2_veri.c,v 1.10 2010/03/08 13:45:11 amorbach Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,10 +48,11 @@ static const char RCSid[]="$Id: icanl2_veri.c,v 1.10 2010/03/08 13:45:11 amorbac
 #include <MEN/icanl2_drv.h>
 #include <MEN/icanl2_api.h>
 
+static const char IdentString[]=MENT_XSTR(MAK_REVISION);
+
 /*--------------------------------------+
 |   DEFINES                             |
 +--------------------------------------*/
-#define REV "1.4"				/* program revision */
 
 #define CHK(expression) \
  if( !(expression)) {\
@@ -170,7 +168,7 @@ static void usage(void)
 	}
 
 	printf("\n");
-	printf("(c) 2001 by MEN mikro elektronik GmbH. Revision %s\n\n", REV);
+	printf("Copyright 2001-2019, MEN Mikro Elektronik GmbH \n%s\n", IdentString);
 }
 
 /********************************* main *************************************

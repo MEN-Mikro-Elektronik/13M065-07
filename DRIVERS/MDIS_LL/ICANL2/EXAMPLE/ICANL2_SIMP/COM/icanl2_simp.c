@@ -5,8 +5,6 @@
  ****************************************************************************
  *
  *       Author: kp
- *        $Date: 2010/03/09 16:48:49 $
- *    $Revision: 1.6 $
  *
  *  Description: Simple example program for the ICANL2 driver
  *
@@ -42,7 +40,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-static const char RCSid[]="$Id: icanl2_simp.c,v 1.6 2010/03/09 16:48:49 amorbach Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

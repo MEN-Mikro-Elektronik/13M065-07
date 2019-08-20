@@ -4,8 +4,6 @@
  *      Project: M65/P5 intelligent layer 2 driver
  *
  *       Author: kp
- *        $Date: 2010/03/09 16:48:53 $
- *    $Revision: 1.4 $
  *
  *  Description: Convert ICANL2 API codes to strings
  *

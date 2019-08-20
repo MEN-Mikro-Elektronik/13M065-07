@@ -2,9 +2,7 @@
  *
  *         Name: icanl2tbox.h
  *
- *      $Author: ub $
- *        $Date: 2004/04/05 08:59:40 $
- *    $Revision: 2.5 $
+ *      Author: ub 
  *
  *  Description: Include file for ICANL2 host toolbox library
  *

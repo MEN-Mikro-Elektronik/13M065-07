@@ -5,8 +5,6 @@
  ****************************************************************************
  *
  *       Author: kp
- *        $Date: 2009/06/29 15:52:10 $
- *    $Revision: 1.2 $
  *
  *  Description: Example program for the ICANL2 driver: cyclic transmissions
  *
@@ -39,7 +37,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-static const char RCSid[]="$Id: icanl2_cyc.c,v 1.2 2009/06/29 15:52:10 CRuff Exp $";
 
 #include <stdio.h>
 #include <stdlib.h>

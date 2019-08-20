@@ -4,8 +4,6 @@
  *      Project: M65/P5 intelligent layer 2 driver
  *
  *       Author: kp
- *        $Date: 2009/06/29 16:00:43 $
- *    $Revision: 1.6 $
  *
  *  Description: Application interface for ICANL2 driver
  *

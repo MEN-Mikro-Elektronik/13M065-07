@@ -3,8 +3,6 @@
  *         Name: icanl2_api.h
  *
  *       Author: kp
- *        $Date: 2009/06/30 11:48:37 $
- *    $Revision: 2.4 $
  *
  *  Description: Header file for ICANL2 (intelligent CAN layer 2) API
  *

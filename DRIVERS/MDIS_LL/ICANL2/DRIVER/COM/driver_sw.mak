@@ -1,8 +1,6 @@
 #***************************  M a k e f i l e  *******************************
 #
 #         Author: kp
-#          $Date: 2002/02/04 15:13:38 $
-#      $Revision: 1.4 $
 #
 #    Description: Makefile definitions for the M65/P5 ICANL2 driver (swapped)
 #
@@ -24,8 +22,13 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 MAK_NAME=icanl2_sw
+# the next line is updated during the MDIS installation
+STAMPED_REVISION="13M065-07_03_06-4-g8230eb7-dirty_2019-08-20"
+
+DEF_REVISION=MAK_REVISION=$(STAMPED_REVISION)
 
 MAK_SWITCH=$(SW_PREFIX)MAC_MEM_MAPPED \
+		$(SW_PREFIX)$(DEF_REVISION) \
 		   $(SW_PREFIX)MAC_BYTESWAP \
 		   $(SW_PREFIX)ICANL2_VARIANT=ICANL2_SW \
 		   $(SW_PREFIX)ID_SW
