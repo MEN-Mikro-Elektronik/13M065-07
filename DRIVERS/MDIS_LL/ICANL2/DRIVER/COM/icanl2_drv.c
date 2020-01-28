@@ -541,8 +541,6 @@ static int32 ICANL2_SetStat(
 			p2+=2;
 			++p1;
 		}
-		// point p1 to the end of data
-		--p1;
         // check value range of data and cast if possible
         if ( 0x0 < ( ( p1 - (h->reqData) ) & 0xffff8000 ) ) {
             error = ERR_LL_ILL_PARAM;
@@ -581,9 +579,6 @@ static int32 ICANL2_SetStat(
 			p2+=2;
 			++p1;
 		}
-		// point p1 to the end of data
-		--p1;
-
         // check value range of data and cast if possible
         if ( 0x0 < ( ( p1 - (h->reqData) ) & 0xffff8000 ) ) {
             error = ERR_LL_ILL_PARAM;
