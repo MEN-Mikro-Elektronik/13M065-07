@@ -19,7 +19,7 @@
  *
  *
  *---------------------------------------------------------------------------
- * Copyright 2002-2019, MEN Mikro Elektronik GmbH
+ * Copyright 2002-2020, MEN Mikro Elektronik GmbH
  ****************************************************************************/
 
  /*
@@ -537,17 +537,17 @@ static int32 ICANL2_SetStat(
 
 		dlen=(pb->dataLen+1) >> 1;
 		for( p1=(u_int32 *)&h->reqData[6], p2=(u_int16 *)pb->data; dlen--; ) {
-			*p1++ = TO_BE16( *p2 );
-			++p2;
+			*p1 = ( TO_BE16( *(p2+1) ) << 16 | TO_BE16( *p2 ) );
+			p2+=2;
+			++p1;
 		}
-
         // check value range of data and cast if possible
         if ( 0x0 < ( ( p1 - (h->reqData) ) & 0xffff8000 ) ) {
             error = ERR_LL_ILL_PARAM;
             UNLOCK_CMDSEM;
             break;
         }
-        req_len = (int16)( p1 - (h->reqData) );
+        req_len = (int16)( (p1 - (h->reqData)) * 4 );
 
 		error = Command( h, ICANL2_CMD_SEND, (u_int8 *)h->reqData, req_len, NULL, 0 );
 		UNLOCK_CMDSEM;
@@ -575,17 +575,17 @@ static int32 ICANL2_SetStat(
 
 		dlen=(pb->dataLen+1) >> 1;
 		for( p1=(u_int32 *)&h->reqData[6], p2=(u_int16 *)pb->data; dlen--; ) {
-			*p1++ = TO_BE16( *p2 );
-			++p2;
+			*p1 = ( TO_BE16( *(p2+1) ) << 16 | TO_BE16( *p2 ) );
+			p2+=2;
+			++p1;
 		}
-
         // check value range of data and cast if possible
         if ( 0x0 < ( ( p1 - (h->reqData) ) & 0xffff8000 ) ) {
             error = ERR_LL_ILL_PARAM;
             UNLOCK_CMDSEM;
             break;
         }
-        req_len = (int16)( p1 - (h->reqData) );
+        req_len = (int16)( (p1 - (h->reqData)) * 4 );
 
 		error = Command( h, ICANL2_CMD_SEND_CYC, (u_int8 *)h->reqData, 
                          req_len, NULL, 0);
